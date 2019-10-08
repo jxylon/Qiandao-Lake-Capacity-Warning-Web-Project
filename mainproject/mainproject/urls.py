@@ -18,12 +18,13 @@ from django.urls import path, include
 from django.conf.urls import url
 from capacityWeb import views as capViews
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     # capacityWEB's TEMPLATE URL
     url(r'^index/', capViews.index),
+    url(r'^latestwarn/', capViews.latestwarn),
     url(r'^test/', capViews.test),
+    url(r'^addData/', capViews.addData),
     # VIEWS URL
     url(r'^getHeatMapNums/', capViews.getHeatMapNums),
     url(r'^getHeatMapScenic/', capViews.getHeatMapScenic),

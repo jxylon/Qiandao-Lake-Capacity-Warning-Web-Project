@@ -87,49 +87,75 @@
             </div>
             <div class="container-content" id="container-numdata">
                 <div class="numdata-line title">本周人数</div>
-                <div class="numdata-line title">同比变化量</div>
                 <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
                 <div class="numdata-line data">{{ rn_sum_week }}<span class="unit"> 人</span></div>
-                {% if rn_sum_week_growth > 0 %}
+                {% if rn_sum_week_yoy > 0 %}
                     <div class="numdata-line data"><i class="fa fa-arrow-up"
                                                       aria-hidden="true"
-                                                      style="color: red"></i>{{ rn_sum_week_growth }}<span
-                            class="unit"> 人</span></div>
-                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      style="color: red"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_week_yoy < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                       aria-hidden="true"
-                                                      style="color: red"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
+                                                      style="color: green"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rn_sum_week_wow > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_week_wow < 0 %}
                     <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                       aria-hidden="true"
-                                                      style="color: green"></i>{{ rn_sum_week_growth }}<span
-                            class="unit"> 人</span></div>
-                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      style="color: green"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
                                                       aria-hidden="true"
-                                                      style="color: green"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
+                                                      style="color: orange"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% endif %}
                 <div class="numdata-line title">本月人数</div>
-                <div class="numdata-line title">同比变化量</div>
                 <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
                 <div class="numdata-line data">{{ rn_sum_month }}<span class="unit"> 人</span></div>
-                {% if rn_sum_month_growth >= 0 %}
+                {% if rn_sum_month_yoy > 0 %}
                     <div class="numdata-line data"><i class="fa fa-arrow-up"
                                                       aria-hidden="true"
-                                                      style="color: red"></i>{{ rn_sum_month_growth }}<span
-                            class="unit"> 人</span></div>
-                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      style="color: red"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_month_yoy < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                       aria-hidden="true"
-                                                      style="color: red"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
+                                                      style="color: green"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rn_sum_month_mom > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_month_mom < 0 %}
                     <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                       aria-hidden="true"
-                                                      style="color: green"></i>{{ rn_sum_month_growth }}<span
-                            class="unit"> 人</span></div>
-                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      style="color: green"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
                                                       aria-hidden="true"
-                                                      style="color: green"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
+                                                      style="color: orange"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% endif %}
             </div>
@@ -184,56 +210,82 @@
             </div>
             <div class="container-content" id="container-warndata">
                 <div class="warndata-line title">本周预警次数</div>
-                <div class="warndata-line title">同比变化量</div>
                 <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
                 <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
-                {% if rw_count_week_growth >= 0 %}
+                {% if rw_count_week_yoy > 0 %}
                     <div class="warndata-line data"><i class="fa fa-arrow-up"
                                                        aria-hidden="true"
-                                                       style="color: red"></i>{{ rw_count_week_growth }}<span
-                            class="unit"> 次</span></div>
-                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       style="color: red"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_week_yoy < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                        aria-hidden="true"
-                                                       style="color: red"></i>{{ rw_count_week_rate|floatformat:2 }}<span
+                                                       style="color: green"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rw_count_week_wow > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_week_wow < 0 %}
                     <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                        aria-hidden="true"
-                                                       style="color: green"></i>{{ rw_count_week_growth }}<span
-                            class="unit"> 次</span></div>
-                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       style="color: green"></i>{{ rw_count_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
                                                        aria-hidden="true"
-                                                       style="color: green"></i>{{ rw_count_week_rate|floatformat:2 }}<span
+                                                       style="color: orange"></i>{{ rw_count_week_wow|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% endif %}
                 <div class="warndata-line title">本月预警次数</div>
-                <div class="warndata-line title">同比变化量</div>
                 <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
                 <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
-                {% if rw_count_month_growth > 0 %}
+                {% if rw_count_month_yoy > 0 %}
                     <div class="warndata-line data"><i class="fa fa-arrow-up"
                                                        aria-hidden="true"
-                                                       style="color: red"></i>{{ rw_count_month_growth }}<span
-                            class="unit"> 次</span></div>
-                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       style="color: red"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_month_yoy < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                        aria-hidden="true"
-                                                       style="color: red"></i>{{ rw_count_month_rate|floatformat:2 }}<span
+                                                       style="color: green"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rw_count_month_mom > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_month_mom < 0 %}
                     <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                        aria-hidden="true"
-                                                       style="color: green"></i>{{ rw_count_month_growth }}<span
-                            class="unit"> 次</span></div>
-                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       style="color: green"></i>{{ rw_count_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
                                                        aria-hidden="true"
-                                                       style="color: green"></i>{{ rw_count_month_rate|floatformat:2 }}<span
+                                                       style="color: orange"></i>{{ rw_count_month_mom|floatformat:2 }}<span
                             class="unit"> %</span></div>
                 {% endif %}
             </div>
         </div>
         <div class="container-block col-md-12" id="piedata">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
+                <div class="container-title"><i class="fa fa-pie-chart"></i> 游客人数与预警分布</div>
                 <div class="container-tag">本月</div>
             </div>
             <div class="piedata-title">游客人数</div>
@@ -243,22 +295,22 @@
         </div>
         <div class="container-block col-md-12" id="current-warning">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
+                <div class="container-title"><i class="fa fa-warning"></i> 最新预警</div>
                 <div class="container-tag">当前情况</div>
             </div>
             <div class="container-content" id="container-warning">
                 {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% elif item.type == 1 and item.level == 2 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% elif item.type == 1 and item.level == 3 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -274,11 +326,6 @@
 
     map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-    map.addControl(new BMap.MapTypeControl(
-        {
-            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
-        }
-    )); //添加跟换地图类型的控件
 
     function addOverHandler(id, name, content, marker, bounce = 1) {
         var info_window = {

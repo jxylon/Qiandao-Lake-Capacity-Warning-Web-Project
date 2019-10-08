@@ -4,7 +4,9 @@ from capacityWeb import views
 
 app_name = '[capacityWeb]'
 urlpatterns = [
+    # 主页
     path('index/', views.index, name='index'),
+    # 各景区详细信息
     path('meifeng/', views.meifeng, name='meifeng'),
     path('huangshanjian/', views.huangshanjian, name='huangshanjian'),
     path('tianchi/', views.tianchi, name='tianchi'),
