@@ -94,7 +94,6 @@
                 <div class="numdata-line title">同比变化率</div>
                 <div class="numdata-line title">环比变化率</div>
                 <div class="numdata-line data">{{ num_this_week }}<span class="unit"> 人</span></div>
-                {#            {% if rn_sum_week_growth > 0 %}#}
                 {% if week_yearOveryear_rate > 0 %}
                     <div class="numdata-line data"><i id="week_yearOveryear_rate"
                                                       class="fa fa-arrow-up"
@@ -102,11 +101,18 @@
                                                       style="color: red"></i>
                         {{ week_yearOveryear_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif week_yearOveryear_rate < 0 %}
                     <div class="numdata-line data"><i id="week_yearOveryear_rate"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ week_yearOveryear_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -118,11 +124,18 @@
                                                       style="color: red"></i>
                         {{ week_weekOverweek_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif week_weekOverweek_rate < 0 %}
                     <div class="numdata-line data"><i id="week_weekOverweek_rate"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ week_weekOverweek_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -139,11 +152,18 @@
                                                       style="color: red"></i>
                         {{ month_yearOveryear_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif month_yearOveryear_rate < 0 %}
                     <div class="numdata-line data"><i id="month_yearOveryear_rate"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ month_yearOveryear_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -155,11 +175,18 @@
                                                       style="color: red"></i>
                         {{ month_monthOvermonth_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif month_monthOvermonth_rate < 0 %}
                     <div class="numdata-line data"><i id="month_monthOvermonth_rate"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ month_monthOvermonth_rate|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -176,15 +203,15 @@
                 {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% elif item.type == 1 and item.level == 2 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% elif item.type == 1 and item.level == 3 %}
                         <div class="content-curwarn col-md-12"
-                             style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -215,9 +242,8 @@
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
                 <select class="container-tag" onchange="numbar_onchange()" id="numbar_selected">
                     <option class="container-tag" value="1" selected>一小时内</option>
-                    <option class="container-tag" value="2" >一周内</option>
-                    <option class="container-tag" value="3" >本月内</option>
-
+                    <option class="container-tag" value="2">一周内</option>
+                    <option class="container-tag" value="3">本月内</option>
 
 
                 </select>
@@ -245,11 +271,18 @@
                                                       style="color: red"></i>
                         {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif week_yearOveryear_rate_warn < 0 %}
                     <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -261,11 +294,18 @@
                                                       style="color: red"></i>
                         {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif week_weekOverweek_rate_warn < 0 %}
                     <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -281,11 +321,18 @@
                                                       style="color: red"></i>
                         {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif month_yearOveryear_rate_warn < 0 %}
                     <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -297,11 +344,18 @@
                                                       style="color: red"></i>
                         {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
-                {% else %}
+                {% elif month_monthOvermonth_rate_warn < 0 %}
                     <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
                                                       class="fa fa-arrow-down"
                                                       aria-hidden="true"
                                                       style="color: green"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
                         {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
                                 class="unit"> %</span></div>
                 {% endif %}
@@ -612,7 +666,7 @@
             clearInterval(iUpdate);
             updateOneHour();
 
-            iUpdate= setInterval(updateOneHour, 60000)
+            iUpdate = setInterval(updateOneHour, 60000)
         }
 
         function weekLine() {
@@ -628,46 +682,47 @@
             updateMonth();
 
         }
-        
-        
-    function numbar_onchange() {
-        var myselect = document.getElementById("numbar_selected");
-        var index = myselect.selectedIndex;
-        var v = myselect.options[index].value;
-        if (v == "1") {
-            oneHourLine();
-        } else if(v == "2") {
-            weekLine();
-        }else {
-            monthLine();
+
+
+        function numbar_onchange() {
+            var myselect = document.getElementById("numbar_selected");
+            var index = myselect.selectedIndex;
+            var v = myselect.options[index].value;
+            if (v == "1") {
+                oneHourLine();
+            } else if (v == "2") {
+                weekLine();
+            } else {
+                monthLine();
+            }
         }
-    }
-    function updateOneHour() {
-                var id = {{ scenic_id }}
+
+        function updateOneHour() {
+            var id = {{ scenic_id }}
                 $.get('/capacityWeb/updatetodayTouristNums/', {'scenicid': id}, function (msg) {
                     datas.length = 0;
                     datas = msg;
                     myChart.setOption({
                         xAxis: {
-                    type: 'time',
-                    splitLine: {
-                        show: true
-                    },
-                    splitArea: {
-                        show: true,
-                    },
-                    axisLabel: {
-                        interale: 0,
-                        rotate: 0,
-                        margin: 8,
-                        fontWeight: 'bold',
-                        formatter: function (value) {
-                            var t_date = new Date(value);
-                            return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
-                                + [t_date.getHours(), t_date.getMinutes()].join(':');
-                        }
-                    },
-                },
+                            type: 'time',
+                            splitLine: {
+                                show: true
+                            },
+                            splitArea: {
+                                show: true,
+                            },
+                            axisLabel: {
+                                interale: 0,
+                                rotate: 0,
+                                margin: 8,
+                                fontWeight: 'bold',
+                                formatter: function (value) {
+                                    var t_date = new Date(value);
+                                    return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
+                                        + [t_date.getHours(), t_date.getMinutes()].join(':');
+                                }
+                            },
+                        },
                         series: [{
                             data: datas,
                             showSymbol: false,
@@ -675,10 +730,11 @@
                         }]
                     })
                 })
-    }
-    function updateWeek() {
-        myChart.setOption({
-            xAxis: {
+        }
+
+        function updateWeek() {
+            myChart.setOption({
+                xAxis: {
                     type: 'time',
                     splitLine: {
                         show: true
@@ -697,16 +753,17 @@
                         }
                     },
                 },
-            series:[{
-                data: {{ start_data_week }},
-                showSymbol: true,
-                hoverAnimation: true,
-            }]
-        })
-    }
-    function updateMonth() {
-        myChart.setOption({
-            xAxis: {
+                series: [{
+                    data: {{ start_data_week }},
+                    showSymbol: true,
+                    hoverAnimation: true,
+                }]
+            })
+        }
+
+        function updateMonth() {
+            myChart.setOption({
+                xAxis: {
                     type: 'time',
                     splitLine: {
                         show: true
@@ -722,19 +779,19 @@
                         formatter: function (value) {
                             var t_date = new Date(value);
                             return [t_date.getMonth() + 1, t_date.getDate()].join('-')
-                             ;
+                                ;
                         }
                     },
                 },
-            series:[{
-                data: {{ start_data_month }},
-                showSymbol: true,
-                hoverAnimation: true,
-            }]
-        })
-    }
+                series: [{
+                    data: {{ start_data_month }},
+                    showSymbol: true,
+                    hoverAnimation: true,
+                }]
+            })
+        }
 
-    var iUpdate= setInterval(updateOneHour, 60000)
+        var iUpdate = setInterval(updateOneHour, 60000)
     } catch (e) {
         alert(e.message)
     }
@@ -747,7 +804,7 @@
             tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
-                confine:true,
+                confine: true,
             },
 
             calculable: true,
@@ -771,8 +828,8 @@
                 },
             ]
         };
-        myChart2.setOption(option)
-        window.addEventListener("resize",function () {
+        myChart2.setOption(option);
+        window.addEventListener("resize", function () {
             myChart2.resize();
         })
     } catch (e) {
@@ -787,7 +844,7 @@
             tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
-                confine:true,
+                confine: true,
             },
             series: [
                 {
@@ -809,8 +866,8 @@
                 }
             ]
         };
-        myChart3.setOption(option)
-        window.addEventListener("resize",function () {
+        myChart3.setOption(option);
+        window.addEventListener("resize", function () {
             myChart3.resize();
         })
     } catch (e) {
