@@ -17,4 +17,5 @@ urlpatterns = [
     path('mishan/', views.mishan, name='mishan'),
     path('updatetodayTouristNums/', views.updatetodayTouristNums),
     path('getScenicHeartMapData/', views.getScenicHeartMapData),
+
 ]

@@ -145,6 +145,7 @@
         context.moveTo(pixel.x + pixel.size, pixel.y);
         context.arc(pixel.x, pixel.y, this.size, 0, Math.PI * 2);
         context.stroke();
+        context.beginPath();
     };
 
     Marker.prototype._drawEllipse = function (context) {

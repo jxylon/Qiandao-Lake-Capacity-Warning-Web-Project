@@ -180,15 +180,21 @@
         </div>
     </div>
     <div class="col-md-6  col-sm-12" id="col2">
-        <div class="container-block col-md-12" id="heatmap">
+        <div class="container-block col-md-12" id="heatmap-tourist">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
-                <select class="container-tag" onchange="heatmap_onchange()" id="heatmap_selected">
-                    <option class="container-tag" value="1">模式一 : 游客人数</option>
-                    <option class="container-tag" value="2" selected>模式二 : 景区承载力</option>
-                </select>
+                <div class="container-title"><i class="fa fa-map-marker"></i> 游客人数热力图</div>
+                <div class="container-tag">模式一 ： 游客人数</div>
             </div>
-            <div class="container-content" id="container-heatmap">
+            <div class="container-content" id="container-heatmap-tour">
+
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="heatmap-capacity">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力热力图</div>
+                <div class="container-tag">模式二 ： 景区承载力</div>
+            </div>
+            <div class="container-content" id="container-heatmap-cap">
 
             </div>
         </div>
@@ -317,17 +323,205 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalone">
+        <div class="modal-dialog" style="width:60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">监控视频</h4>
+                </div>
+                <div class="modal-body">
+                    <video id='modal-vid' src="{% static 'video/video_01.mp4' %}" height="500px" controls
+                           preload="metadata"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
 <script type="text/javascript">
-    // 百度地图API功能
-    var map = new BMap.Map("container-heatmap");    // 创建Map实例
-    map.centerAndZoom(new BMap.Point(119.018693, 29.600992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    // 百度地图API功能，游客人数热力图
+    var map_tour = new BMap.Map("container-heatmap-tour", {enableMapClick: false});    // 创建Map实例
+    var zoom_tour_num = 12;
+    var marker_tour_array = [];
+    var camera_tour_array = [];
+    map_tour.centerAndZoom(new BMap.Point(119.028693, 29.575992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    map_tour.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map_tour.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    // 清除所有标注物
+    function clearAllMarkers(map, marker_array) {
+        var i;
+        for (i = 0; i < marker_array.length; i++) {
+            map.removeOverlay(marker_array[i]);
+        }
+        marker_array.length = 0;
+    }
 
+    function addOverHandler_tour(id, name, content, marker, bounce = 1) {
+        var info_window_tour = {
+            width: 200,     // 信息窗口宽度
+            height: 60,     // 信息窗口高度
+            title: name, // 信息窗口标题
+            enableMessage: true //设置允许信息窗发送短息
+        };
+        if (bounce) {
+            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
+        }
+        marker.addEventListener("mouseover", function (e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow_tour = new BMap.InfoWindow(content, info_window_tour);  // 创建信息窗口对象
+                map_tour.openInfoWindow(infoWindow_tour, point); //开启信息窗口
+            }
+        );
+        marker.addEventListener("mouseout", function (e) {
+                map_tour.closeInfoWindow(); //关闭信息窗口
+            }
+        );
+        marker.addEventListener("click", function (e) {
+                if (id == 1)
+                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";
+                else if (id == 2)
+                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";
+                else if (id == 3)
+                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";
+                else if (id == 4)
+                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";
+                else if (id == 5)
+                    window.location.href = "{% url '[capacityWeb]:longsha' %}";
+                else if (id == 6)
+                    window.location.href = "{% url '[capacityWeb]:yule' %}";
+                else if (id == 7)
+                    window.location.href = "{% url '[capacityWeb]:guihua' %}";
+                else if (id == 8)
+                    window.location.href = "{% url '[capacityWeb]:mishan' %}";
+            }
+        );
+    }
+
+    // 加载热力图
+    function heatmap_nums() {
+        // 清除所有摄像头分布
+        clearAllMarkers(map_tour, camera_tour_array);
+        // 坐标点
+        $.ajax({
+            url: '/getHeatMapNums/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var obj_tour = jQuery.parseJSON(arg)[0];
+                // 各摄像头的统计对象
+                cam_points_obj = obj_tour['rn_data'];
+                // 景区标注对象
+                scenic_points_obj = obj_tour['scenic_data'];
+                var points = [];
+                var scenicnums = [];
+                // 初始化景区人数之和
+                for (i = 0; i < scenic_points_obj.length; i++) {
+                    scenicnums[i] = 0;
+                }
+                // 统计各摄像头信息
+                for (i = 0; i < cam_points_obj.length; i++) {
+                    points.push({
+                        'lng': cam_points_obj[i].camLng,
+                        'lat': cam_points_obj[i].camLat,
+                        'count': cam_points_obj[i].all_nums
+                    });
+                    scenicnums[cam_points_obj[i].scenicId - 1] += cam_points_obj[i].all_nums;
+                }
+                // 添加标注物
+                for (var i = 0; i < scenic_points_obj.length; i++) {
+                    var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
+                    var marker = new BMap.Marker(point); // 标注物
+                    map_tour.addOverlay(marker);
+                    marker_tour_array.push(marker);
+                    addOverHandler_tour(i + 1, scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
+                }
+                heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+                map_tour.addOverlay(heatmapOverlay);
+                heatmapOverlay.setDataSet({data: points, max: 1000});
+                heatmapOverlay.show();
+            }
+        });
+    }
+
+    // 加载摄像头分布
+    function heatmap_get_tour_camera() {
+        clearAllMarkers(map_tour, marker_tour_array);
+        $.ajax({
+            url: '/getHeatMapCamera/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];
+                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),
+                    {
+                        'anchor': new BMap.Size(10, 20)
+                    });
+                // 统计各摄像头信息
+                for (i = 0; i < camera_obj.length; i++) {
+                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c' + camera_obj[i].camId + '.mp4';
+                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
+                    //自定义参数id
+                    marker.vid_name = vid_name;
+                    marker.cam_name = cam_name;
+                    // 添加事件
+                    marker.addEventListener("click", function (e) {
+                        $("#modalone").modal({
+                            backdrop: true, // 相当于data-backdrop
+                            keyboard: false, // 相当于data-keyboard
+                            show: true, // 相当于data-show
+                            remote: "" // 相当于a标签作为触发器的href
+                        });
+                        var modal = $("#modalone").modal();
+                        modal.find('.modal-title').text(e.target.cam_name);
+                        modal.find('.modal-body video').attr("src", "/static/video/video_01.mp4");
+                    });
+                    map_tour.addOverlay(marker);
+                    camera_tour_array.push(marker);
+                }
+            }
+        });
+    }
+
+    // 层级缩放事件
+    map_tour.addEventListener("zoomend", function () {
+        var zoom_num_now = map_tour.getZoom();
+        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
+        if (zoom_tour_num < 18 && zoom_num_now >= 18) {
+            heatmap_get_tour_camera();
+        }
+        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
+        else if (zoom_tour_num >= 18 && zoom_num_now < 18) {
+            heatmap_nums();
+        }
+        zoom_tour_num = zoom_num_now
+    });
+    // 加载事件，首次加载，默认执行
+    map_tour.addEventListener("addtilelayer", function () {
+        heatmap_nums();
+    });
+</script>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("container-heatmap-cap", {enableMapClick: false});    // 创建Map实例
+    var zoom_scenic_num = 12;
+    var marker_scenic_array = [];
+    var camera_scenic_array = [];
+    map.centerAndZoom(new BMap.Point(119.028693, 29.572992), 12);  // 初始化地图,设置中心点坐标和地图级别
     map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
-    function addOverHandler(id, name, content, marker, bounce = 1) {
+    function addOverHandler_cap(id, name, content, marker, bounce = 1) {
         var info_window = {
             width: 200,     // 信息窗口宽度
             height: 60,     // 信息窗口高度
@@ -369,55 +563,9 @@
         );
     }
 
-    function heatmap_nums() {
-        map.clearOverlays();
-        // 坐标点
-        $.ajax({
-            url: '/getHeatMapNums/',
-            type: 'POST',
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            async: true,
-            success: function (arg) {
-
-                // 若调用成功，向地图添加标记
-                var obj = jQuery.parseJSON(arg)[0];
-                // 各摄像头的统计对象
-                cam_points_obj = obj['rn_data'];
-                // 景区标注对象
-                scenic_points_obj = obj['scenic_data'];
-                var points = [];
-                var scenicnums = [];
-                // 初始化景区人数之和
-                for (i = 0; i < scenic_points_obj.length; i++) {
-                    scenicnums[i] = 0;
-                }
-                // 统计各摄像头信息
-                for (i = 0; i < cam_points_obj.length; i++) {
-                    points.push({
-                        'lng': cam_points_obj[i].camLng,
-                        'lat': cam_points_obj[i].camLat,
-                        'count': cam_points_obj[i].all_nums
-                    });
-                    scenicnums[cam_points_obj[i].scenicId - 1] += cam_points_obj[i].all_nums;
-                }
-                // 添加标注物
-                for (var i = 0; i < scenic_points_obj.length; i++) {
-                    var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
-                    var marker = new BMap.Marker(point); // 标注物
-                    map.addOverlay(marker);
-                    addOverHandler(i + 1, scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
-                }
-                heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-                map.addOverlay(heatmapOverlay);
-                heatmapOverlay.setDataSet({data: points, max: 1000});
-                heatmapOverlay.show();
-            }
-        });
-    }
-
     function heatmap_scenic() {
-        map.clearOverlays();
-        // 坐标点
+        // 清除所有摄像头分布
+        clearAllMarkers(map, camera_scenic_array);
         $.ajax({
             url: '/getHeatMapScenic/',
             type: 'POST',
@@ -425,8 +573,8 @@
             async: true,
             success: function (arg) {
                 // 若调用成功，向地图添加标记
-                var obj = jQuery.parseJSON(arg)[0];
-                rn_obj = obj['rn_data'];
+                var obj_cap = jQuery.parseJSON(arg)[0];
+                rn_obj = obj_cap['rn_data'];
                 var citys = [];
                 for (var i = 0; i < rn_obj.length; i++) {
                     city = {};
@@ -457,8 +605,9 @@
                         city['speed'] = 0.5;
                         city['status'] = '爆满';
                     }
-                    addOverHandler(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
+                    addOverHandler_cap(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
                     map.addOverlay(marker);
+                    marker_scenic_array.push(marker);
                     citys.push(city);
                 }
                 var flashMarkerLayer = new FlashMarker(map, citys);
@@ -466,17 +615,66 @@
         });
     }
 
-    heatmap_scenic(); // 默认执行
-    function heatmap_onchange() {
-        var myselect = document.getElementById("heatmap_selected");
-        var index = myselect.selectedIndex;
-        var v = myselect.options[index].value;
-        if (v == "1") {
-            heatmap_nums();
-        } else {
+    // 加载摄像头分布
+    function heatmap_get_scenic_camera() {
+        clearAllMarkers(map, marker_scenic_array);
+        $.ajax({
+            url: '/getHeatMapCamera/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];
+                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),
+                    {
+                        'anchor': new BMap.Size(10, 20)
+                    });
+                // 统计各摄像头信息
+                for (i = 0; i < camera_obj.length; i++) {
+                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c' + camera_obj[i].camId + '.mp4';
+                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
+                    //自定义参数id
+                    marker.vid_name = vid_name;
+                    marker.cam_name = cam_name;
+                    // 添加事件
+                    marker.addEventListener("click", function (e) {
+                        $("#modalone").modal({
+                            backdrop: true, // 相当于data-backdrop
+                            keyboard: false, // 相当于data-keyboard
+                            show: true, // 相当于data-show
+                            remote: "" // 相当于a标签作为触发器的href
+                        });
+                        var modal = $("#modalone").modal();
+                        modal.find('.modal-title').text(e.target.cam_name);
+                        modal.find('.modal-body video').attr("src", "/static/video/video_01.mp4");
+                    });
+                    map.addOverlay(marker);
+                    camera_scenic_array.push(marker);
+                }
+            }
+        });
+    }
+
+    // 层级缩放事件
+    map.addEventListener("zoomend", function () {
+        var zoom_num_now = map.getZoom();
+        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
+        if (zoom_scenic_num < 18 && zoom_num_now >= 18) {
+            heatmap_get_scenic_camera();
+        }
+        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
+        else if (zoom_scenic_num >= 18 && zoom_num_now < 18) {
             heatmap_scenic();
         }
-    }
+        zoom_scenic_num = zoom_num_now
+    });
+    // 加载事件，首次加载，默认执行
+    map.addEventListener("addtilelayer", function () {
+        heatmap_scenic();
+    });
 </script>
 
 <script type="text/javascript">
@@ -521,7 +719,7 @@
     graph1.lineAlpha = 0;
     graph1.fillColors = "#607fd9";
     graph1.fillAlphas = 0.8;
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
     chart.addGraph(graph1);
 
     // WRITE
@@ -569,7 +767,7 @@
     graph1.lineAlpha = 0;
     graph1.fillColors = "#d92202";
     graph1.fillAlphas = 0.8;
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
     chart.addGraph(graph1);
 
     // WRITE
@@ -610,7 +808,7 @@
     graph1.fillAlphas = 1;
     graph1.dashLengthField = "dashLengthColumn";
     graph1.alphaField = "alpha";
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
     chart.addGraph(graph1);
 
     // line
@@ -626,14 +824,14 @@
     graph2.bulletBorderAlpha = 1;
     graph2.bulletColor = "#ffffff";
     graph2.dashLengthField = "dashLengthLine";
-    graph2.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    graph2.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
     chart.addGraph(graph2);
 
     // LEGEND
-    var legend = new AmCharts.AmLegend();
-    legend.useGraphSettings = true;
-    legend.position = 'top';
-    chart.addLegend(legend);
+    // var legend = new AmCharts.AmLegend();
+    // legend.useGraphSettings = true;
+    // legend.position = 'top';
+    // chart.addLegend(legend);
 
     // WRITE
     chart.write("container-numbar");
@@ -683,7 +881,18 @@
     $('li').click(function () {
         $("li.active").removeClass("active");
         $(this).addClass("active");
-    })
+    });
+    // 视频模态框
+    $('#modalone').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+    });
+    $('#modalone').on('hidden.bs.modal', function () {
+        var video = document.getElementById('modal-vid');
+        video.pause();
+    });
 </script>
 </body>
 </html>

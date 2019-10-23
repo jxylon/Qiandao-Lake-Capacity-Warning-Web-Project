@@ -6,6 +6,13 @@ html, body {
     background-size: 100% 100%;
 }
 
+.BMap_cpyCtrl {
+    display: none;
+}
+
+.anchorBL {
+    display: none;
+}
 
 .navbar-default {
     background-color: #21798d;
@@ -208,12 +215,16 @@ html, body {
 
 #col1, #col2, #col3 {
     height: 100%;
-    padding: 5px 2px 0 2px;
+    padding: 0 2px 0 2px;
 }
 
 
-#heatmap {
-    height: 60%;
+#heatmap-tourist {
+    height: 38%;
+}
+
+#heatmap-capacity {
+    height: 38%;
 }
 
 
@@ -234,14 +245,13 @@ html, body {
 
 
 #warnrank {
-    height: 37%;
+    height: 37.5%;
 
 }
 
 
 #numbar {
-    height: 42%;
-
+    height: 25.5%;
 }
 
 
@@ -252,7 +262,7 @@ html, body {
 
 
 #current-warning {
-    height: 37%;
+    height: 37.5%;
     overflow-y: scroll;
 
 }
@@ -308,10 +318,13 @@ html, body {
 }
 
 
-#heatmap > .container-content {
-    height: 90%;
+#heatmap-tourist > .container-content {
+    height: 84%;
 }
 
+#heatmap-capacity > .container-content {
+    height: 84%;
+}
 
 /* .numdata */
 .numdata-line {

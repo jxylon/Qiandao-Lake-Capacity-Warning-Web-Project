@@ -360,7 +360,7 @@ def getWarnNums():
         context['rw_count_week_yoy'] = (rw_count_week - rw_count_week_lastyear) / (rw_count_week_lastyear + 1) * 100
         context['rw_count_month'] = rw_count_month
         context['rw_count_month_mom'] = (rw_count_month - rw_count_month_lastmonth) / (
-                    rw_count_month_lastmonth + 1) * 100
+                rw_count_month_lastmonth + 1) * 100
         context['rw_count_month_yoy'] = (rw_count_month - rw_count_month_lastyear) / (rw_count_month_lastyear + 1) * 100
     return context
 
@@ -530,6 +530,18 @@ def getHeatMapScenic(request):
         cursor.execute(query, [query_time])
         rn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         res_json[0]['rn_data'] = rn_data
+    res_json_seri = json.dumps(res_json)
+    return HttpResponse(res_json_seri)
+
+
+def getHeatMapCamera(request):
+    # 封装json
+    res_json = [{}]
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM camera WHERE camId!=0"
+        cursor.execute(query)
+        camera_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        res_json[0]['camera_data'] = camera_data
     res_json_seri = json.dumps(res_json)
     return HttpResponse(res_json_seri)
 
