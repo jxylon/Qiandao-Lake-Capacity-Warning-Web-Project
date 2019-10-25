@@ -208,7 +208,7 @@ html, body {
     border: 2px solid #c3c3c3;
     margin: 2px;
     background: white;
-    z-index: 1;
+    z-index: auto;
     padding: 0 5px 0 5px;
 }
 
@@ -223,8 +223,24 @@ html, body {
     height: 38%;
 }
 
+#heatmap-tourist-full {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+    z-index: 3;
+    background-color: transparent;
+}
+
 #heatmap-capacity {
     height: 38%;
+}
+
+#heatmap-capacity-full {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+    z-index: 3;
+    background-color: transparent;
 }
 
 
@@ -319,11 +335,11 @@ html, body {
 
 
 #heatmap-tourist > .container-content {
-    height: 84%;
+    height: 85%;
 }
 
 #heatmap-capacity > .container-content {
-    height: 84%;
+    height: 85%;
 }
 
 /* .numdata */
@@ -443,4 +459,15 @@ html, body {
 select, option {
     text-align: center;
     text-align-last: center;
+}
+
+#modal-vid {
+    position: fixed;
+    margin: auto;
+    height: 100%;
+    z-index: 4;
+}
+
+.modal-backdrop {
+    z-index: -1;
 }

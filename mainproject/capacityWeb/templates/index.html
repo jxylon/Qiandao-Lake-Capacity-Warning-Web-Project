@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖承载量预警平台</a>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -188,14 +188,51 @@
             <div class="container-content" id="container-heatmap-tour">
 
             </div>
+            <button onclick="fullscreen_click(this)" id="heatmap-tourist-full"><img
+                    src="{% static 'img/fullscreen.svg' %}"
+                    alt="fullscreen"></button>
+            <div class="modal fade" id="modal-vid">
+                <div class="modal-dialog" style="width:60%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">监控视频</h4>
+                        </div>
+                        <div class="modal-body">
+                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="container-block col-md-12" id="heatmap-capacity">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力热力图</div>
+                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>
                 <div class="container-tag">模式二 ： 景区承载力</div>
+
             </div>
             <div class="container-content" id="container-heatmap-cap">
 
+            </div>
+            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img
+                    src="{% static 'img/fullscreen.svg' %}"
+                    alt="fullscreen"></button>
+            <div class="modal fade" id="modal-vid2">
+                <div class="modal-dialog" style="width:60%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">监控视频</h4>
+                        </div>
+                        <div class="modal-body">
+                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="container-block col-md-12" id="numbar">
@@ -320,22 +357,6 @@
                         </div>
                     {% endif %}
                 {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modalone">
-        <div class="modal-dialog" style="width:60%">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title">监控视频</h4>
-                </div>
-                <div class="modal-body">
-                    <video id='modal-vid' src="{% static 'video/video_01.mp4' %}" height="500px" controls
-                           preload="metadata"></video>
-                </div>
             </div>
         </div>
     </div>
@@ -469,22 +490,25 @@
                 for (i = 0; i < camera_obj.length; i++) {
                     var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
                     var marker = new BMap.Marker(point, {icon: icon}); // 标注物
-                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c' + camera_obj[i].camId + '.mp4';
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';
+                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {
+                        vid_name = 'vid_s1_c2.mp4';
+                    }
                     var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
                     //自定义参数id
                     marker.vid_name = vid_name;
                     marker.cam_name = cam_name;
                     // 添加事件
                     marker.addEventListener("click", function (e) {
-                        $("#modalone").modal({
+                        $("#modal-vid").modal({
                             backdrop: true, // 相当于data-backdrop
                             keyboard: false, // 相当于data-keyboard
                             show: true, // 相当于data-show
                             remote: "" // 相当于a标签作为触发器的href
                         });
-                        var modal = $("#modalone").modal();
+                        var modal = $("#modal-vid").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
-                        modal.find('.modal-body video').attr("src", "/static/video/video_01.mp4");
+                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
                     });
                     map_tour.addOverlay(marker);
                     camera_tour_array.push(marker);
@@ -634,22 +658,25 @@
                 for (i = 0; i < camera_obj.length; i++) {
                     var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
                     var marker = new BMap.Marker(point, {icon: icon}); // 标注物
-                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c' + camera_obj[i].camId + '.mp4';
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';
+                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {
+                        vid_name = 'vid_s1_c2.mp4';
+                    }
                     var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
                     //自定义参数id
                     marker.vid_name = vid_name;
                     marker.cam_name = cam_name;
                     // 添加事件
                     marker.addEventListener("click", function (e) {
-                        $("#modalone").modal({
+                        $("#modal-vid2").modal({
                             backdrop: true, // 相当于data-backdrop
                             keyboard: false, // 相当于data-keyboard
                             show: true, // 相当于data-show
                             remote: "" // 相当于a标签作为触发器的href
                         });
-                        var modal = $("#modalone").modal();
+                        var modal = $("#modal-vid2").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
-                        modal.find('.modal-body video').attr("src", "/static/video/video_01.mp4");
+                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
                     });
                     map.addOverlay(marker);
                     camera_scenic_array.push(marker);
@@ -883,16 +910,75 @@
         $(this).addClass("active");
     });
     // 视频模态框
-    $('#modalone').on('show.bs.modal', function () {
+    $('#modal-vid').on('show.bs.modal', function () {
         var $this = $(this);
         var $modal_dialog = $this.find('.modal-dialog');
         $this.css('display', 'block');
         $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
     });
-    $('#modalone').on('hidden.bs.modal', function () {
+    $('#modal-vid').on('hidden.bs.modal', function () {
         var video = document.getElementById('modal-vid');
         video.pause();
     });
+    $('#modal-vid2').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+    });
+    $('#modal-vid2').on('hidden.bs.modal', function () {
+        var video = document.getElementById('modal-vid2');
+        video.pause();
+    });
+
+    // 进入全屏
+    function launchFullscreen(obj_id) {
+        var element = document.getElementById(obj_id.substring(0, obj_id.length - 5));
+        var button_img = document.querySelector("#" + obj_id + " > img");
+        button_img.setAttribute('src', '/static/img/exit-fullscreen.svg');
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    //退出全屏
+    function exitFullscreen(obj_id) {
+        var de = document;
+        var button_img = document.querySelector("#" + obj_id + " > img");
+        button_img.setAttribute('src', '/static/img/fullscreen.svg');
+        if (de.exitFullscreen) {
+            de.exitFullscreen();
+        } else if (de.mozCancelFullScreen) {
+            de.mozCancelFullScreen();
+        } else if (de.webkitCancelFullScreen) {
+            de.webkitCancelFullScreen();
+        }
+    }
+
+    // 判断是否全屏
+    function isFullscreenForNoScroll() {
+        var explorer = window.navigator.userAgent.toLowerCase();
+        if (explorer.indexOf('chrome') > 0) {//webkit
+            return !(document.body.scrollHeight === window.screen.height && document.body.scrollWidth === window.screen.width);
+        } else {//IE 9+  fireFox
+            return window.outerHeight === window.screen.height && window.outerWidth === window.screen.width;
+        }
+    }
+
+    function fullscreen_click(obj) {
+        var flag = isFullscreenForNoScroll();
+        if (flag) {
+            launchFullscreen(obj.id);
+        } else {
+            exitFullscreen(obj.id);
+        }
+    }
 </script>
 </body>
 </html>
