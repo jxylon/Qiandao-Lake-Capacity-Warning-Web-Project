@@ -11,150 +11,11 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 06/10/2019 11:14:11
+ Date: 25/10/2019 08:54:29
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for auth_group
--- ----------------------------
-DROP TABLE IF EXISTS `auth_group`;
-CREATE TABLE `auth_group`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for auth_group_permissions
--- ----------------------------
-DROP TABLE IF EXISTS `auth_group_permissions`;
-CREATE TABLE `auth_group_permissions`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` int(11) NOT NULL,
-  `permission_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `auth_group_permissions_group_id_permission_id_0cd325b0_uniq`(`group_id`, `permission_id`) USING BTREE,
-  INDEX `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm`(`permission_id`) USING BTREE,
-  CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for auth_permission
--- ----------------------------
-DROP TABLE IF EXISTS `auth_permission`;
-CREATE TABLE `auth_permission`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `content_type_id` int(11) NOT NULL,
-  `codename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `auth_permission_content_type_id_codename_01ab375a_uniq`(`content_type_id`, `codename`) USING BTREE,
-  CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of auth_permission
--- ----------------------------
-INSERT INTO `auth_permission` VALUES (1, 'Can add log entry', 1, 'add_logentry');
-INSERT INTO `auth_permission` VALUES (2, 'Can change log entry', 1, 'change_logentry');
-INSERT INTO `auth_permission` VALUES (3, 'Can delete log entry', 1, 'delete_logentry');
-INSERT INTO `auth_permission` VALUES (4, 'Can view log entry', 1, 'view_logentry');
-INSERT INTO `auth_permission` VALUES (5, 'Can add permission', 2, 'add_permission');
-INSERT INTO `auth_permission` VALUES (6, 'Can change permission', 2, 'change_permission');
-INSERT INTO `auth_permission` VALUES (7, 'Can delete permission', 2, 'delete_permission');
-INSERT INTO `auth_permission` VALUES (8, 'Can view permission', 2, 'view_permission');
-INSERT INTO `auth_permission` VALUES (9, 'Can add group', 3, 'add_group');
-INSERT INTO `auth_permission` VALUES (10, 'Can change group', 3, 'change_group');
-INSERT INTO `auth_permission` VALUES (11, 'Can delete group', 3, 'delete_group');
-INSERT INTO `auth_permission` VALUES (12, 'Can view group', 3, 'view_group');
-INSERT INTO `auth_permission` VALUES (13, 'Can add user', 4, 'add_user');
-INSERT INTO `auth_permission` VALUES (14, 'Can change user', 4, 'change_user');
-INSERT INTO `auth_permission` VALUES (15, 'Can delete user', 4, 'delete_user');
-INSERT INTO `auth_permission` VALUES (16, 'Can view user', 4, 'view_user');
-INSERT INTO `auth_permission` VALUES (17, 'Can add content type', 5, 'add_contenttype');
-INSERT INTO `auth_permission` VALUES (18, 'Can change content type', 5, 'change_contenttype');
-INSERT INTO `auth_permission` VALUES (19, 'Can delete content type', 5, 'delete_contenttype');
-INSERT INTO `auth_permission` VALUES (20, 'Can view content type', 5, 'view_contenttype');
-INSERT INTO `auth_permission` VALUES (21, 'Can add session', 6, 'add_session');
-INSERT INTO `auth_permission` VALUES (22, 'Can change session', 6, 'change_session');
-INSERT INTO `auth_permission` VALUES (23, 'Can delete session', 6, 'delete_session');
-INSERT INTO `auth_permission` VALUES (24, 'Can view session', 6, 'view_session');
-INSERT INTO `auth_permission` VALUES (25, 'Can add camera', 7, 'add_camera');
-INSERT INTO `auth_permission` VALUES (26, 'Can change camera', 7, 'change_camera');
-INSERT INTO `auth_permission` VALUES (27, 'Can delete camera', 7, 'delete_camera');
-INSERT INTO `auth_permission` VALUES (28, 'Can view camera', 7, 'view_camera');
-INSERT INTO `auth_permission` VALUES (29, 'Can add recordnums', 8, 'add_recordnums');
-INSERT INTO `auth_permission` VALUES (30, 'Can change recordnums', 8, 'change_recordnums');
-INSERT INTO `auth_permission` VALUES (31, 'Can delete recordnums', 8, 'delete_recordnums');
-INSERT INTO `auth_permission` VALUES (32, 'Can view recordnums', 8, 'view_recordnums');
-INSERT INTO `auth_permission` VALUES (33, 'Can add recordwarnings', 9, 'add_recordwarnings');
-INSERT INTO `auth_permission` VALUES (34, 'Can change recordwarnings', 9, 'change_recordwarnings');
-INSERT INTO `auth_permission` VALUES (35, 'Can delete recordwarnings', 9, 'delete_recordwarnings');
-INSERT INTO `auth_permission` VALUES (36, 'Can view recordwarnings', 9, 'view_recordwarnings');
-INSERT INTO `auth_permission` VALUES (37, 'Can add scenic', 10, 'add_scenic');
-INSERT INTO `auth_permission` VALUES (38, 'Can change scenic', 10, 'change_scenic');
-INSERT INTO `auth_permission` VALUES (39, 'Can delete scenic', 10, 'delete_scenic');
-INSERT INTO `auth_permission` VALUES (40, 'Can view scenic', 10, 'view_scenic');
-
--- ----------------------------
--- Table structure for auth_user
--- ----------------------------
-DROP TABLE IF EXISTS `auth_user`;
-CREATE TABLE `auth_user`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `last_login` datetime(6) NULL DEFAULT NULL,
-  `is_superuser` tinyint(1) NOT NULL,
-  `username` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `first_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `last_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `email` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `is_staff` tinyint(1) NOT NULL,
-  `is_active` tinyint(1) NOT NULL,
-  `date_joined` datetime(6) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of auth_user
--- ----------------------------
-INSERT INTO `auth_user` VALUES (1, 'pbkdf2_sha256$150000$QXijHrQ3iTiQ$KgAJ1KTQShpas47dQYLidvdSOOcttIl0MlGrrruokjg=', '2019-09-19 10:23:09.339721', 1, 'lujipeng', '', '', '1459921878@qq.com', 1, 1, '2019-09-19 10:22:53.534915');
-
--- ----------------------------
--- Table structure for auth_user_groups
--- ----------------------------
-DROP TABLE IF EXISTS `auth_user_groups`;
-CREATE TABLE `auth_user_groups`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `auth_user_groups_user_id_group_id_94350c0c_uniq`(`user_id`, `group_id`) USING BTREE,
-  INDEX `auth_user_groups_group_id_97559544_fk_auth_group_id`(`group_id`) USING BTREE,
-  CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for auth_user_user_permissions
--- ----------------------------
-DROP TABLE IF EXISTS `auth_user_user_permissions`;
-CREATE TABLE `auth_user_user_permissions`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `permission_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `auth_user_user_permissions_user_id_permission_id_14a6b632_uniq`(`user_id`, `permission_id`) USING BTREE,
-  INDEX `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm`(`permission_id`) USING BTREE,
-  CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for camera
@@ -183,223 +44,126 @@ INSERT INTO `camera` VALUES ('0', '5', NULL, NULL, NULL);
 INSERT INTO `camera` VALUES ('0', '6', NULL, NULL, NULL);
 INSERT INTO `camera` VALUES ('0', '7', NULL, NULL, NULL);
 INSERT INTO `camera` VALUES ('0', '8', NULL, NULL, NULL);
-INSERT INTO `camera` VALUES ('1', '1', '梅峰岛摄像头1', 118.914040, 29.591582);
-INSERT INTO `camera` VALUES ('1', '2', '黄山尖摄像头1', 119.114201, 29.575119);
-INSERT INTO `camera` VALUES ('1', '3', '天池岛摄像头1', 119.151567, 29.540364);
-INSERT INTO `camera` VALUES ('1', '4', '月光岛摄像头1', 119.010280, 29.617142);
-INSERT INTO `camera` VALUES ('1', '5', '龙山岛摄像头1', 118.987777, 29.612867);
-INSERT INTO `camera` VALUES ('1', '6', '渔乐岛摄像头1', 118.950008, 29.581945);
-INSERT INTO `camera` VALUES ('1', '7', '桂花岛摄像头1', 119.021611, 29.601234);
-INSERT INTO `camera` VALUES ('1', '8', '蜜山岛摄像头1', 119.161597, 29.525063);
-INSERT INTO `camera` VALUES ('10', '1', '梅峰岛摄像头10', 118.913921, 29.591121);
-INSERT INTO `camera` VALUES ('10', '2', '黄山尖摄像头10', 119.113813, 29.574356);
-INSERT INTO `camera` VALUES ('10', '3', '天池岛摄像头10', 119.151208, 29.540723);
-INSERT INTO `camera` VALUES ('10', '4', '月光岛摄像头10', 119.010901, 29.617369);
-INSERT INTO `camera` VALUES ('10', '5', '龙山岛摄像头10', 118.987511, 29.612781);
-INSERT INTO `camera` VALUES ('10', '6', '渔乐岛摄像头10', 118.949932, 29.581953);
-INSERT INTO `camera` VALUES ('10', '7', '桂花岛摄像头10', 119.022075, 29.601344);
-INSERT INTO `camera` VALUES ('10', '8', '蜜山岛摄像头10', 119.161267, 29.524979);
-INSERT INTO `camera` VALUES ('11', '1', '梅峰岛摄像头11', 118.913801, 29.591733);
-INSERT INTO `camera` VALUES ('11', '2', '黄山尖摄像头11', 119.113584, 29.574848);
-INSERT INTO `camera` VALUES ('11', '3', '天池岛摄像头11', 119.151807, 29.540226);
-INSERT INTO `camera` VALUES ('11', '4', '月光岛摄像头11', 119.010338, 29.617333);
-INSERT INTO `camera` VALUES ('11', '5', '龙山岛摄像头11', 118.987725, 29.612121);
-INSERT INTO `camera` VALUES ('11', '6', '渔乐岛摄像头11', 118.950594, 29.582282);
-INSERT INTO `camera` VALUES ('11', '7', '桂花岛摄像头11', 119.022254, 29.601402);
-INSERT INTO `camera` VALUES ('11', '8', '蜜山岛摄像头11', 119.161343, 29.525388);
-INSERT INTO `camera` VALUES ('12', '1', '梅峰岛摄像头12', 118.914139, 29.590981);
-INSERT INTO `camera` VALUES ('12', '2', '黄山尖摄像头12', 119.113690, 29.574910);
-INSERT INTO `camera` VALUES ('12', '3', '天池岛摄像头12', 119.151296, 29.539967);
-INSERT INTO `camera` VALUES ('12', '4', '月光岛摄像头12', 119.010358, 29.617071);
-INSERT INTO `camera` VALUES ('12', '5', '龙山岛摄像头12', 118.987539, 29.612290);
-INSERT INTO `camera` VALUES ('12', '6', '渔乐岛摄像头12', 118.950546, 29.582039);
-INSERT INTO `camera` VALUES ('12', '7', '桂花岛摄像头12', 119.021524, 29.601340);
-INSERT INTO `camera` VALUES ('12', '8', '蜜山岛摄像头12', 119.161793, 29.525679);
-INSERT INTO `camera` VALUES ('13', '1', '梅峰岛摄像头13', 118.914044, 29.591447);
-INSERT INTO `camera` VALUES ('13', '2', '黄山尖摄像头13', 119.114141, 29.574684);
-INSERT INTO `camera` VALUES ('13', '3', '天池岛摄像头13', 119.151063, 29.540602);
-INSERT INTO `camera` VALUES ('13', '4', '月光岛摄像头13', 119.010996, 29.617534);
-INSERT INTO `camera` VALUES ('13', '5', '龙山岛摄像头13', 118.987708, 29.612575);
-INSERT INTO `camera` VALUES ('13', '6', '渔乐岛摄像头13', 118.950435, 29.582332);
-INSERT INTO `camera` VALUES ('13', '7', '桂花岛摄像头13', 119.022106, 29.601339);
-INSERT INTO `camera` VALUES ('13', '8', '蜜山岛摄像头13', 119.161895, 29.525255);
-INSERT INTO `camera` VALUES ('14', '1', '梅峰岛摄像头14', 118.913892, 29.591577);
-INSERT INTO `camera` VALUES ('14', '2', '黄山尖摄像头14', 119.114419, 29.574548);
-INSERT INTO `camera` VALUES ('14', '3', '天池岛摄像头14', 119.151834, 29.539992);
-INSERT INTO `camera` VALUES ('14', '4', '月光岛摄像头14', 119.010952, 29.617585);
-INSERT INTO `camera` VALUES ('14', '5', '龙山岛摄像头14', 118.987077, 29.612109);
-INSERT INTO `camera` VALUES ('14', '6', '渔乐岛摄像头14', 118.950473, 29.582526);
-INSERT INTO `camera` VALUES ('14', '7', '桂花岛摄像头14', 119.021841, 29.600886);
-INSERT INTO `camera` VALUES ('14', '8', '蜜山岛摄像头14', 119.161313, 29.524977);
-INSERT INTO `camera` VALUES ('15', '1', '梅峰岛摄像头15', 118.913663, 29.591296);
-INSERT INTO `camera` VALUES ('15', '2', '黄山尖摄像头15', 119.113916, 29.574610);
-INSERT INTO `camera` VALUES ('15', '3', '天池岛摄像头15', 119.151556, 29.540064);
-INSERT INTO `camera` VALUES ('15', '4', '月光岛摄像头15', 119.010888, 29.617808);
-INSERT INTO `camera` VALUES ('15', '5', '龙山岛摄像头15', 118.987002, 29.612072);
-INSERT INTO `camera` VALUES ('15', '6', '渔乐岛摄像头15', 118.950002, 29.581774);
-INSERT INTO `camera` VALUES ('15', '7', '桂花岛摄像头15', 119.022258, 29.601192);
-INSERT INTO `camera` VALUES ('15', '8', '蜜山岛摄像头15', 119.161642, 29.524950);
-INSERT INTO `camera` VALUES ('2', '1', '梅峰岛摄像头2', 118.913524, 29.591094);
-INSERT INTO `camera` VALUES ('2', '2', '黄山尖摄像头2', 119.114118, 29.574557);
-INSERT INTO `camera` VALUES ('2', '3', '天池岛摄像头2', 119.151856, 29.539850);
-INSERT INTO `camera` VALUES ('2', '4', '月光岛摄像头2', 119.010378, 29.617804);
-INSERT INTO `camera` VALUES ('2', '5', '龙山岛摄像头2', 118.987336, 29.612797);
-INSERT INTO `camera` VALUES ('2', '6', '渔乐岛摄像头2', 118.950435, 29.581926);
-INSERT INTO `camera` VALUES ('2', '7', '桂花岛摄像头2', 119.021987, 29.601271);
-INSERT INTO `camera` VALUES ('2', '8', '蜜山岛摄像头2', 119.161209, 29.525045);
-INSERT INTO `camera` VALUES ('3', '1', '梅峰岛摄像头3', 118.913563, 29.591677);
-INSERT INTO `camera` VALUES ('3', '2', '黄山尖摄像头3', 119.113829, 29.574553);
-INSERT INTO `camera` VALUES ('3', '3', '天池岛摄像头3', 119.151342, 29.540357);
-INSERT INTO `camera` VALUES ('3', '4', '月光岛摄像头3', 119.010218, 29.617288);
-INSERT INTO `camera` VALUES ('3', '5', '龙山岛摄像头3', 118.986963, 29.612691);
-INSERT INTO `camera` VALUES ('3', '6', '渔乐岛摄像头3', 118.950433, 29.581861);
-INSERT INTO `camera` VALUES ('3', '7', '桂花岛摄像头3', 119.021849, 29.601211);
-INSERT INTO `camera` VALUES ('3', '8', '蜜山岛摄像头3', 119.161262, 29.525707);
-INSERT INTO `camera` VALUES ('4', '1', '梅峰岛摄像头4', 118.913478, 29.591605);
-INSERT INTO `camera` VALUES ('4', '2', '黄山尖摄像头4', 119.114160, 29.574663);
-INSERT INTO `camera` VALUES ('4', '3', '天池岛摄像头4', 119.151824, 29.539853);
-INSERT INTO `camera` VALUES ('4', '4', '月光岛摄像头4', 119.010681, 29.617531);
-INSERT INTO `camera` VALUES ('4', '5', '龙山岛摄像头4', 118.987817, 29.612868);
-INSERT INTO `camera` VALUES ('4', '6', '渔乐岛摄像头4', 118.949861, 29.582044);
-INSERT INTO `camera` VALUES ('4', '7', '桂花岛摄像头4', 119.022190, 29.601039);
-INSERT INTO `camera` VALUES ('4', '8', '蜜山岛摄像头4', 119.161938, 29.525221);
-INSERT INTO `camera` VALUES ('5', '1', '梅峰岛摄像头5', 118.913965, 29.590936);
-INSERT INTO `camera` VALUES ('5', '2', '黄山尖摄像头5', 119.113863, 29.574545);
-INSERT INTO `camera` VALUES ('5', '3', '天池岛摄像头5', 119.151574, 29.540512);
-INSERT INTO `camera` VALUES ('5', '4', '月光岛摄像头5', 119.010919, 29.617736);
-INSERT INTO `camera` VALUES ('5', '5', '龙山岛摄像头5', 118.987057, 29.612372);
-INSERT INTO `camera` VALUES ('5', '6', '渔乐岛摄像头5', 118.949879, 29.582027);
-INSERT INTO `camera` VALUES ('5', '7', '桂花岛摄像头5', 119.021847, 29.600545);
-INSERT INTO `camera` VALUES ('5', '8', '蜜山岛摄像头5', 119.161260, 29.525595);
-INSERT INTO `camera` VALUES ('6', '1', '梅峰岛摄像头6', 118.914196, 29.591552);
-INSERT INTO `camera` VALUES ('6', '2', '黄山尖摄像头6', 119.114234, 29.574984);
-INSERT INTO `camera` VALUES ('6', '3', '天池岛摄像头6', 119.151009, 29.540379);
-INSERT INTO `camera` VALUES ('6', '4', '月光岛摄像头6', 119.010167, 29.617637);
-INSERT INTO `camera` VALUES ('6', '5', '龙山岛摄像头6', 118.987060, 29.612915);
-INSERT INTO `camera` VALUES ('6', '6', '渔乐岛摄像头6', 118.950026, 29.582176);
-INSERT INTO `camera` VALUES ('6', '7', '桂花岛摄像头6', 119.021400, 29.600838);
-INSERT INTO `camera` VALUES ('6', '8', '蜜山岛摄像头6', 119.161969, 29.525178);
-INSERT INTO `camera` VALUES ('7', '1', '梅峰岛摄像头7', 118.913429, 29.591513);
-INSERT INTO `camera` VALUES ('7', '2', '黄山尖摄像头7', 119.114367, 29.574803);
-INSERT INTO `camera` VALUES ('7', '3', '天池岛摄像头7', 119.151303, 29.540625);
-INSERT INTO `camera` VALUES ('7', '4', '月光岛摄像头7', 119.010953, 29.617140);
-INSERT INTO `camera` VALUES ('7', '5', '龙山岛摄像头7', 118.987562, 29.612914);
-INSERT INTO `camera` VALUES ('7', '6', '渔乐岛摄像头7', 118.950515, 29.581983);
-INSERT INTO `camera` VALUES ('7', '7', '桂花岛摄像头7', 119.021409, 29.601168);
-INSERT INTO `camera` VALUES ('7', '8', '蜜山岛摄像头7', 119.161297, 29.525419);
-INSERT INTO `camera` VALUES ('8', '1', '梅峰岛摄像头8', 118.914055, 29.590969);
-INSERT INTO `camera` VALUES ('8', '2', '黄山尖摄像头8', 119.113796, 29.574898);
-INSERT INTO `camera` VALUES ('8', '3', '天池岛摄像头8', 119.151881, 29.540313);
-INSERT INTO `camera` VALUES ('8', '4', '月光岛摄像头8', 119.010648, 29.617741);
-INSERT INTO `camera` VALUES ('8', '5', '龙山岛摄像头8', 118.987054, 29.612118);
-INSERT INTO `camera` VALUES ('8', '6', '渔乐岛摄像头8', 118.950555, 29.582215);
-INSERT INTO `camera` VALUES ('8', '7', '桂花岛摄像头8', 119.021491, 29.600675);
-INSERT INTO `camera` VALUES ('8', '8', '蜜山岛摄像头8', 119.161615, 29.525392);
-INSERT INTO `camera` VALUES ('9', '1', '梅峰岛摄像头9', 118.914201, 29.591544);
-INSERT INTO `camera` VALUES ('9', '2', '黄山尖摄像头9', 119.114145, 29.574911);
-INSERT INTO `camera` VALUES ('9', '3', '天池岛摄像头9', 119.151037, 29.539966);
-INSERT INTO `camera` VALUES ('9', '4', '月光岛摄像头9', 119.010825, 29.617182);
-INSERT INTO `camera` VALUES ('9', '5', '龙山岛摄像头9', 118.987301, 29.612074);
-INSERT INTO `camera` VALUES ('9', '6', '渔乐岛摄像头9', 118.949906, 29.582193);
-INSERT INTO `camera` VALUES ('9', '7', '桂花岛摄像头9', 119.021775, 29.600614);
-INSERT INTO `camera` VALUES ('9', '8', '蜜山岛摄像头9', 119.161724, 29.525184);
-
--- ----------------------------
--- Table structure for django_admin_log
--- ----------------------------
-DROP TABLE IF EXISTS `django_admin_log`;
-CREATE TABLE `django_admin_log`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `action_time` datetime(6) NOT NULL,
-  `object_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-  `object_repr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `action_flag` smallint(5) UNSIGNED NOT NULL,
-  `change_message` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `content_type_id` int(11) NULL DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `django_admin_log_content_type_id_c4bce8eb_fk_django_co`(`content_type_id`) USING BTREE,
-  INDEX `django_admin_log_user_id_c564eba6_fk_auth_user_id`(`user_id`) USING BTREE,
-  CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for django_content_type
--- ----------------------------
-DROP TABLE IF EXISTS `django_content_type`;
-CREATE TABLE `django_content_type`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `app_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `django_content_type_app_label_model_76bd3d3b_uniq`(`app_label`, `model`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of django_content_type
--- ----------------------------
-INSERT INTO `django_content_type` VALUES (1, 'admin', 'logentry');
-INSERT INTO `django_content_type` VALUES (3, 'auth', 'group');
-INSERT INTO `django_content_type` VALUES (2, 'auth', 'permission');
-INSERT INTO `django_content_type` VALUES (4, 'auth', 'user');
-INSERT INTO `django_content_type` VALUES (7, 'capacityWeb', 'camera');
-INSERT INTO `django_content_type` VALUES (8, 'capacityWeb', 'recordnums');
-INSERT INTO `django_content_type` VALUES (9, 'capacityWeb', 'recordwarnings');
-INSERT INTO `django_content_type` VALUES (10, 'capacityWeb', 'scenic');
-INSERT INTO `django_content_type` VALUES (5, 'contenttypes', 'contenttype');
-INSERT INTO `django_content_type` VALUES (6, 'sessions', 'session');
-
--- ----------------------------
--- Table structure for django_migrations
--- ----------------------------
-DROP TABLE IF EXISTS `django_migrations`;
-CREATE TABLE `django_migrations`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `app` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `applied` datetime(6) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of django_migrations
--- ----------------------------
-INSERT INTO `django_migrations` VALUES (1, 'contenttypes', '0001_initial', '2019-09-19 10:20:51.188791');
-INSERT INTO `django_migrations` VALUES (2, 'auth', '0001_initial', '2019-09-19 10:20:51.511951');
-INSERT INTO `django_migrations` VALUES (3, 'admin', '0001_initial', '2019-09-19 10:20:52.502149');
-INSERT INTO `django_migrations` VALUES (4, 'admin', '0002_logentry_remove_auto_add', '2019-09-19 10:20:52.770431');
-INSERT INTO `django_migrations` VALUES (5, 'admin', '0003_logentry_add_action_flag_choices', '2019-09-19 10:20:52.780375');
-INSERT INTO `django_migrations` VALUES (6, 'contenttypes', '0002_remove_content_type_name', '2019-09-19 10:20:52.972858');
-INSERT INTO `django_migrations` VALUES (7, 'auth', '0002_alter_permission_name_max_length', '2019-09-19 10:20:53.085558');
-INSERT INTO `django_migrations` VALUES (8, 'auth', '0003_alter_user_email_max_length', '2019-09-19 10:20:53.116473');
-INSERT INTO `django_migrations` VALUES (9, 'auth', '0004_alter_user_username_opts', '2019-09-19 10:20:53.132431');
-INSERT INTO `django_migrations` VALUES (10, 'auth', '0005_alter_user_last_login_null', '2019-09-19 10:20:53.216209');
-INSERT INTO `django_migrations` VALUES (11, 'auth', '0006_require_contenttypes_0002', '2019-09-19 10:20:53.221194');
-INSERT INTO `django_migrations` VALUES (12, 'auth', '0007_alter_validators_add_error_messages', '2019-09-19 10:20:53.232165');
-INSERT INTO `django_migrations` VALUES (13, 'auth', '0008_alter_user_username_max_length', '2019-09-19 10:20:53.349850');
-INSERT INTO `django_migrations` VALUES (14, 'auth', '0009_alter_user_last_name_max_length', '2019-09-19 10:20:53.498205');
-INSERT INTO `django_migrations` VALUES (15, 'auth', '0010_alter_group_name_max_length', '2019-09-19 10:20:53.525132');
-INSERT INTO `django_migrations` VALUES (16, 'auth', '0011_update_proxy_permissions', '2019-09-19 10:20:53.535138');
-INSERT INTO `django_migrations` VALUES (17, 'capacityWeb', '0001_initial', '2019-09-19 10:20:53.544082');
-INSERT INTO `django_migrations` VALUES (18, 'sessions', '0001_initial', '2019-09-19 10:20:53.599932');
-
--- ----------------------------
--- Table structure for django_session
--- ----------------------------
-DROP TABLE IF EXISTS `django_session`;
-CREATE TABLE `django_session`  (
-  `session_key` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `session_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `expire_date` datetime(6) NOT NULL,
-  PRIMARY KEY (`session_key`) USING BTREE,
-  INDEX `django_session_expire_date_a5c62663`(`expire_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of django_session
--- ----------------------------
-INSERT INTO `django_session` VALUES ('dol4a7eb8wwbjtfvx2bzn7ndusswwogz', 'ZjlhNTBmMzk5NGFiZmUzMmMzYzMwYWJkM2E2NGViZWVjOThmYmI2Mzp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI4ODFkOGNmN2FjODdkODlkODU2ODUwZjkwZGNhZjRmYmYyM2NjZWFlIn0=', '2019-10-03 10:23:09.346698');
+INSERT INTO `camera` VALUES ('1', '1', '梅峰岛摄像头1', 118.913233, 29.590927);
+INSERT INTO `camera` VALUES ('1', '2', '黄山尖摄像头1', 119.113483, 29.574242);
+INSERT INTO `camera` VALUES ('1', '3', '天池岛摄像头1', 119.150892, 29.539735);
+INSERT INTO `camera` VALUES ('1', '4', '月光岛摄像头1', 119.010011, 29.616902);
+INSERT INTO `camera` VALUES ('1', '5', '龙山岛摄像头1', 118.984021, 29.608909);
+INSERT INTO `camera` VALUES ('1', '6', '渔乐岛摄像头1', 118.949420, 29.581853);
+INSERT INTO `camera` VALUES ('1', '7', '桂花岛摄像头1', 119.153178, 29.498122);
+INSERT INTO `camera` VALUES ('1', '8', '蜜山岛摄像头1', 119.160413, 29.525553);
+INSERT INTO `camera` VALUES ('10', '1', '梅峰岛摄像头10', 118.927841, 29.595990);
+INSERT INTO `camera` VALUES ('10', '2', '黄山尖摄像头10', 119.112982, 29.573593);
+INSERT INTO `camera` VALUES ('10', '3', '天池岛摄像头10', 119.152858, 29.542020);
+INSERT INTO `camera` VALUES ('10', '4', '月光岛摄像头10', 119.007800, 29.616608);
+INSERT INTO `camera` VALUES ('10', '5', '龙山岛摄像头10', 118.987396, 29.610198);
+INSERT INTO `camera` VALUES ('10', '6', '渔乐岛摄像头10', 118.953903, 29.581926);
+INSERT INTO `camera` VALUES ('10', '7', '桂花岛摄像头10', 119.154948, 29.497621);
+INSERT INTO `camera` VALUES ('10', '8', '蜜山岛摄像头10', 119.160269, 29.525325);
+INSERT INTO `camera` VALUES ('11', '1', '梅峰岛摄像头11', 118.928160, 29.595837);
+INSERT INTO `camera` VALUES ('11', '2', '黄山尖摄像头11', 119.113415, 29.574535);
+INSERT INTO `camera` VALUES ('11', '3', '天池岛摄像头11', 119.150262, 29.538885);
+INSERT INTO `camera` VALUES ('11', '4', '月光岛摄像头11', 119.015810, 29.621126);
+INSERT INTO `camera` VALUES ('11', '5', '龙山岛摄像头11', 118.991430, 29.611658);
+INSERT INTO `camera` VALUES ('11', '6', '渔乐岛摄像头11', 118.949171, 29.581823);
+INSERT INTO `camera` VALUES ('11', '7', '桂花岛摄像头11', 119.152774, 29.497115);
+INSERT INTO `camera` VALUES ('11', '8', '蜜山岛摄像头11', 119.160177, 29.527786);
+INSERT INTO `camera` VALUES ('12', '1', '梅峰岛摄像头12', 118.928546, 29.595750);
+INSERT INTO `camera` VALUES ('12', '2', '黄山尖摄像头12', 119.116873, 29.574377);
+INSERT INTO `camera` VALUES ('12', '3', '天池岛摄像头12', 119.150349, 29.536010);
+INSERT INTO `camera` VALUES ('12', '4', '月光岛摄像头12', 119.014310, 29.621259);
+INSERT INTO `camera` VALUES ('12', '5', '龙山岛摄像头12', 118.987786, 29.609773);
+INSERT INTO `camera` VALUES ('12', '6', '渔乐岛摄像头12', 118.948796, 29.581002);
+INSERT INTO `camera` VALUES ('12', '7', '桂花岛摄像头12', 119.153638, 29.496859);
+INSERT INTO `camera` VALUES ('12', '8', '蜜山岛摄像头12', 119.161023, 29.524773);
+INSERT INTO `camera` VALUES ('13', '1', '梅峰岛摄像头13', 118.928155, 29.594612);
+INSERT INTO `camera` VALUES ('13', '2', '黄山尖摄像头13', 119.114736, 29.574253);
+INSERT INTO `camera` VALUES ('13', '3', '天池岛摄像头13', 119.151110, 29.536643);
+INSERT INTO `camera` VALUES ('13', '4', '月光岛摄像头13', 119.009364, 29.620325);
+INSERT INTO `camera` VALUES ('13', '5', '龙山岛摄像头13', 118.983861, 29.612404);
+INSERT INTO `camera` VALUES ('13', '6', '渔乐岛摄像头13', 118.950286, 29.581775);
+INSERT INTO `camera` VALUES ('13', '7', '桂花岛摄像头13', 119.153638, 29.496859);
+INSERT INTO `camera` VALUES ('13', '8', '蜜山岛摄像头13', 119.158985, 29.527219);
+INSERT INTO `camera` VALUES ('14', '1', '梅峰岛摄像头14', 118.928259, 29.594129);
+INSERT INTO `camera` VALUES ('14', '2', '黄山尖摄像头14', 119.113334, 29.573648);
+INSERT INTO `camera` VALUES ('14', '3', '天池岛摄像头14', 119.149168, 29.535963);
+INSERT INTO `camera` VALUES ('14', '4', '月光岛摄像头14', 119.014142, 29.621172);
+INSERT INTO `camera` VALUES ('14', '5', '龙山岛摄像头14', 118.991397, 29.611390);
+INSERT INTO `camera` VALUES ('14', '6', '渔乐岛摄像头14', 118.948827, 29.581045);
+INSERT INTO `camera` VALUES ('14', '7', '桂花岛摄像头14', 119.153130, 29.497920);
+INSERT INTO `camera` VALUES ('14', '8', '蜜山岛摄像头14', 119.158787, 29.527423);
+INSERT INTO `camera` VALUES ('15', '1', '梅峰岛摄像头15', 118.927796, 29.596159);
+INSERT INTO `camera` VALUES ('15', '2', '黄山尖摄像头15', 119.115918, 29.574805);
+INSERT INTO `camera` VALUES ('15', '3', '天池岛摄像头15', 119.150217, 29.538589);
+INSERT INTO `camera` VALUES ('15', '4', '月光岛摄像头15', 119.007792, 29.617090);
+INSERT INTO `camera` VALUES ('15', '5', '龙山岛摄像头15', 118.987588, 29.610056);
+INSERT INTO `camera` VALUES ('15', '6', '渔乐岛摄像头15', 118.948827, 29.581045);
+INSERT INTO `camera` VALUES ('15', '7', '桂花岛摄像头15', 119.155187, 29.497775);
+INSERT INTO `camera` VALUES ('15', '8', '蜜山岛摄像头15', 119.158976, 29.527447);
+INSERT INTO `camera` VALUES ('2', '1', '梅峰岛摄像头2', 118.928669, 29.592628);
+INSERT INTO `camera` VALUES ('2', '2', '黄山尖摄像头2', 119.113725, 29.573695);
+INSERT INTO `camera` VALUES ('2', '3', '天池岛摄像头2', 119.150370, 29.538249);
+INSERT INTO `camera` VALUES ('2', '4', '月光岛摄像头2', 119.013712, 29.620930);
+INSERT INTO `camera` VALUES ('2', '5', '龙山岛摄像头2', 118.982144, 29.609452);
+INSERT INTO `camera` VALUES ('2', '6', '渔乐岛摄像头2', 118.950597, 29.581524);
+INSERT INTO `camera` VALUES ('2', '7', '桂花岛摄像头2', 119.155093, 29.497618);
+INSERT INTO `camera` VALUES ('2', '8', '蜜山岛摄像头2', 119.160718, 29.524823);
+INSERT INTO `camera` VALUES ('3', '1', '梅峰岛摄像头3', 118.926495, 29.592886);
+INSERT INTO `camera` VALUES ('3', '2', '黄山尖摄像头3', 119.117044, 29.574432);
+INSERT INTO `camera` VALUES ('3', '3', '天池岛摄像头3', 119.154969, 29.540920);
+INSERT INTO `camera` VALUES ('3', '4', '月光岛摄像头3', 119.010657, 29.617412);
+INSERT INTO `camera` VALUES ('3', '5', '龙山岛摄像头3', 118.985836, 29.609452);
+INSERT INTO `camera` VALUES ('3', '6', '渔乐岛摄像头3', 118.953768, 29.581998);
+INSERT INTO `camera` VALUES ('3', '7', '桂花岛摄像头3', 119.154954, 29.497456);
+INSERT INTO `camera` VALUES ('3', '8', '蜜山岛摄像头3', 119.159097, 29.526861);
+INSERT INTO `camera` VALUES ('4', '1', '梅峰岛摄像头4', 118.925989, 29.592557);
+INSERT INTO `camera` VALUES ('4', '2', '黄山尖摄像头4', 119.115629, 29.572970);
+INSERT INTO `camera` VALUES ('4', '3', '天池岛摄像头4', 119.150361, 29.538298);
+INSERT INTO `camera` VALUES ('4', '4', '月光岛摄像头4', 119.010737, 29.616709);
+INSERT INTO `camera` VALUES ('4', '5', '龙山岛摄像头4', 118.991857, 29.611192);
+INSERT INTO `camera` VALUES ('4', '6', '渔乐岛摄像头4', 118.951836, 29.582105);
+INSERT INTO `camera` VALUES ('4', '7', '桂花岛摄像头4', 119.154859, 29.497339);
+INSERT INTO `camera` VALUES ('4', '8', '蜜山岛摄像头4', 119.159707, 29.527333);
+INSERT INTO `camera` VALUES ('5', '1', '梅峰岛摄像头5', 118.926486, 29.592839);
+INSERT INTO `camera` VALUES ('5', '2', '黄山尖摄像头5', 119.115849, 29.574900);
+INSERT INTO `camera` VALUES ('5', '3', '天池岛摄像头5', 119.153771, 29.538115);
+INSERT INTO `camera` VALUES ('5', '4', '月光岛摄像头5', 119.009886, 29.617123);
+INSERT INTO `camera` VALUES ('5', '5', '龙山岛摄像头5', 118.991217, 29.611610);
+INSERT INTO `camera` VALUES ('5', '6', '渔乐岛摄像头5', 118.950606, 29.581831);
+INSERT INTO `camera` VALUES ('5', '7', '桂花岛摄像头5', 119.153157, 29.497551);
+INSERT INTO `camera` VALUES ('5', '8', '蜜山岛摄像头5', 119.159644, 29.526508);
+INSERT INTO `camera` VALUES ('6', '1', '梅峰岛摄像头6', 118.927073, 29.593124);
+INSERT INTO `camera` VALUES ('6', '2', '黄山尖摄像头6', 119.115801, 29.573270);
+INSERT INTO `camera` VALUES ('6', '3', '天池岛摄像头6', 119.155182, 29.542410);
+INSERT INTO `camera` VALUES ('6', '4', '月光岛摄像头6', 119.010095, 29.617081);
+INSERT INTO `camera` VALUES ('6', '5', '龙山岛摄像头6', 118.992009, 29.612945);
+INSERT INTO `camera` VALUES ('6', '6', '渔乐岛摄像头6', 118.952447, 29.582349);
+INSERT INTO `camera` VALUES ('6', '7', '桂花岛摄像头6', 119.153844, 29.497657);
+INSERT INTO `camera` VALUES ('6', '8', '蜜山岛摄像头6', 119.160633, 29.525926);
+INSERT INTO `camera` VALUES ('7', '1', '梅峰岛摄像头7', 118.928528, 29.593065);
+INSERT INTO `camera` VALUES ('7', '2', '黄山尖摄像头7', 119.113415, 29.573557);
+INSERT INTO `camera` VALUES ('7', '3', '天池岛摄像头7', 119.156577, 29.541465);
+INSERT INTO `camera` VALUES ('7', '4', '月光岛摄像头7', 119.009535, 29.620364);
+INSERT INTO `camera` VALUES ('7', '5', '龙山岛摄像头7', 118.982206, 29.610681);
+INSERT INTO `camera` VALUES ('7', '6', '渔乐岛摄像头7', 118.949312, 29.581885);
+INSERT INTO `camera` VALUES ('7', '7', '桂花岛摄像头7', 119.153844, 29.497657);
+INSERT INTO `camera` VALUES ('7', '8', '蜜山岛摄像头7', 119.160821, 29.525204);
+INSERT INTO `camera` VALUES ('8', '1', '梅峰岛摄像头8', 118.927104, 29.595079);
+INSERT INTO `camera` VALUES ('8', '2', '黄山尖摄像头8', 119.115654, 29.574769);
+INSERT INTO `camera` VALUES ('8', '3', '天池岛摄像头8', 119.154529, 29.539825);
+INSERT INTO `camera` VALUES ('8', '4', '月光岛摄像头8', 119.010230, 29.620174);
+INSERT INTO `camera` VALUES ('8', '5', '龙山岛摄像头8', 118.983782, 29.609166);
+INSERT INTO `camera` VALUES ('8', '6', '渔乐岛摄像头8', 118.949698, 29.581595);
+INSERT INTO `camera` VALUES ('8', '7', '桂花岛摄像头8', 119.154927, 29.497928);
+INSERT INTO `camera` VALUES ('8', '8', '蜜山岛摄像头8', 119.160031, 29.526272);
+INSERT INTO `camera` VALUES ('9', '1', '梅峰岛摄像头9', 118.927607, 29.595629);
+INSERT INTO `camera` VALUES ('9', '2', '黄山尖摄像头9', 119.116049, 29.574659);
+INSERT INTO `camera` VALUES ('9', '3', '天池岛摄像头9', 119.155607, 29.541914);
+INSERT INTO `camera` VALUES ('9', '4', '月光岛摄像头9', 119.015247, 29.621117);
+INSERT INTO `camera` VALUES ('9', '5', '龙山岛摄像头9', 118.991155, 29.611603);
+INSERT INTO `camera` VALUES ('9', '6', '渔乐岛摄像头9', 118.950624, 29.581783);
+INSERT INTO `camera` VALUES ('9', '7', '桂花岛摄像头9', 119.155232, 29.497904);
+INSERT INTO `camera` VALUES ('9', '8', '蜜山岛摄像头9', 119.159671, 29.524976);
 
 -- ----------------------------
 -- Table structure for recordnums
@@ -40145,7 +39909,7 @@ CREATE TABLE `recordwarnings`  (
   `createAt` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '发生预警时间',
   PRIMARY KEY (`warningId`) USING BTREE,
   INDEX `recordwarnings_ibfk_1`(`scenicId`, `camId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 170 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 491 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of recordwarnings
@@ -40665,7 +40429,7 @@ INSERT INTO `scenic` VALUES ('3', '天池岛', 7798, 7378, 6959, 119.150892, 29.
 INSERT INTO `scenic` VALUES ('4', '月光岛', 5352, 4069, 2786, 119.010011, 29.616902);
 INSERT INTO `scenic` VALUES ('5', '龙山岛', 8340, 7062, 4786, 118.986830, 29.611748);
 INSERT INTO `scenic` VALUES ('6', '渔乐岛', 8605, 4555, 3505, 118.949420, 29.581853);
-INSERT INTO `scenic` VALUES ('7', '桂花岛', 3462, 2325, 1189, 119.021076, 29.600132);
+INSERT INTO `scenic` VALUES ('7', '桂花岛', 3462, 2325, 1189, 119.153178, 29.498122);
 INSERT INTO `scenic` VALUES ('8', '蜜山岛', 8310, 8206, 8103, 119.161023, 29.524773);
 
 SET FOREIGN_KEY_CHECKS = 1;
