@@ -33,8 +33,6 @@ def main():
 
 
 if __name__ == '__main__':
-
     Field.register_lookup(modEqual)
-    print('registed')
     main()
 

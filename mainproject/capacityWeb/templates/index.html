@@ -201,6 +201,7 @@
                             <h4 class="modal-title">监控视频</h4>
                         </div>
                         <div class="modal-body">
+                            <p class="modal-number">当前人数:<span id="modal-vid-count">0</span></p>
                             <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
                         </div>
                     </div>
@@ -229,6 +230,7 @@
                             <h4 class="modal-title">监控视频</h4>
                         </div>
                         <div class="modal-body">
+                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>
                             <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
                         </div>
                     </div>
@@ -471,6 +473,8 @@
         });
     }
 
+    var vidcount_itv;
+
     // 加载摄像头分布
     function heatmap_get_tour_camera() {
         clearAllMarkers(map_tour, marker_tour_array);
@@ -509,6 +513,37 @@
                         var modal = $("#modal-vid").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
                         modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
+                        modal.find('#modal-vid-count').text(0);
+                        // 开始检测视频
+                        $.ajax({
+                            url: '/startDetectCount_thread/',
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}', 'vid_name': e.target.vid_name,
+                            },
+                            async: false,
+                            success: function (arg) {
+                                arg_json = JSON.parse(arg);
+                                // alert(arg_json.msg);
+                            }
+                        });
+
+                        function getDetectCount_vid1() {
+                            $.ajax({
+                                url: '/getCountNum_thread/',
+                                type: 'POST',
+                                data: {
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                },
+                                async: false,
+                                success: function (arg) {
+                                    arg_json = JSON.parse(arg);
+                                    modal.find('#modal-vid-count').text(arg_json.count);
+                                }
+                            });
+                        }
+
+                        vidcount_itv = setInterval(getDetectCount_vid1, 1000);
                     });
                     map_tour.addOverlay(marker);
                     camera_tour_array.push(marker);
@@ -534,6 +569,33 @@
     map_tour.addEventListener("addtilelayer", function () {
         heatmap_nums();
     });
+    // 视频模态框
+    $('#modal-vid').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+    });
+    $('#modal-vid').on('hidden.bs.modal', function () {
+        // 关闭定时
+        clearInterval(vidcount_itv);
+        // 关闭线程
+        $.ajax({
+            url: '/exitDetectCount_thread/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            async: false,
+            success: function (arg) {
+                arg_json = JSON.parse(arg);
+            }
+        });
+        // 视频暂停
+        var video = document.getElementById('modal-vid');
+        video.pause();
+    });
+
 </script>
 <script type="text/javascript">
     // 百度地图API功能
@@ -639,6 +701,8 @@
         });
     }
 
+    var vidcount_itv;
+
     // 加载摄像头分布
     function heatmap_get_scenic_camera() {
         clearAllMarkers(map, marker_scenic_array);
@@ -677,6 +741,37 @@
                         var modal = $("#modal-vid2").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
                         modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
+                        modal.find('#modal-vid2-count').text(0);
+                        // 开始检测视频
+                        $.ajax({
+                            url: '/startDetectCount_thread/',
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}', 'vid_name': e.target.vid_name,
+                            },
+                            async: false,
+                            success: function (arg) {
+                                arg_json = JSON.parse(arg);
+                                // alert(arg_json.msg);
+                            }
+                        });
+
+                        function getDetectCount_vid1() {
+                            $.ajax({
+                                url: '/getCountNum_thread/',
+                                type: 'POST',
+                                data: {
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                },
+                                async: false,
+                                success: function (arg) {
+                                    arg_json = JSON.parse(arg);
+                                    modal.find('#modal-vid2-count').text(arg_json.count);
+                                }
+                            });
+                        }
+
+                        vidcount_itv = setInterval(getDetectCount_vid1, 1000);
                     });
                     map.addOverlay(marker);
                     camera_scenic_array.push(marker);
@@ -702,8 +797,32 @@
     map.addEventListener("addtilelayer", function () {
         heatmap_scenic();
     });
+    $('#modal-vid2').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+    });
+    $('#modal-vid2').on('hidden.bs.modal', function () {
+        // 关闭定时
+        clearInterval(vidcount_itv);
+        // 关闭线程
+        $.ajax({
+            url: '/exitDetectCount_thread/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            async: false,
+            success: function (arg) {
+                arg_json = JSON.parse(arg);
+            }
+        });
+        // 视频暂停
+        var video = document.getElementById('modal-vid2');
+        video.pause();
+    });
 </script>
-
 <script type="text/javascript">
     var chart;
     var chartData1 = {{ scenicrank_data }};
@@ -909,27 +1028,6 @@
         $("li.active").removeClass("active");
         $(this).addClass("active");
     });
-    // 视频模态框
-    $('#modal-vid').on('show.bs.modal', function () {
-        var $this = $(this);
-        var $modal_dialog = $this.find('.modal-dialog');
-        $this.css('display', 'block');
-        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
-    });
-    $('#modal-vid').on('hidden.bs.modal', function () {
-        var video = document.getElementById('modal-vid');
-        video.pause();
-    });
-    $('#modal-vid2').on('show.bs.modal', function () {
-        var $this = $(this);
-        var $modal_dialog = $this.find('.modal-dialog');
-        $this.css('display', 'block');
-        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
-    });
-    $('#modal-vid2').on('hidden.bs.modal', function () {
-        var video = document.getElementById('modal-vid2');
-        video.pause();
-    });
 
     // 进入全屏
     function launchFullscreen(obj_id) {
@@ -966,7 +1064,8 @@
         var explorer = window.navigator.userAgent.toLowerCase();
         if (explorer.indexOf('chrome') > 0) {//webkit
             return !(document.body.scrollHeight === window.screen.height && document.body.scrollWidth === window.screen.width);
-        } else {//IE 9+  fireFox
+        } else {
+            //IE 9+  fireFox
             return window.outerHeight === window.screen.height && window.outerWidth === window.screen.width;
         }
     }

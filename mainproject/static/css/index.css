@@ -471,3 +471,10 @@ select, option {
 .modal-backdrop {
     z-index: -1;
 }
+
+.modal-number {
+    position: absolute;
+    color: #ff5858;
+    font-size: 25px;
+    font-weight: bold;
+}

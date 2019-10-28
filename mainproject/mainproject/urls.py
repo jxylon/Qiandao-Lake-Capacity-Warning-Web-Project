@@ -26,6 +26,11 @@ urlpatterns = [
     url(r'^test/', capViews.test),
     url(r'^addData/', capViews.addData),
     # VIEWS URL
+    url(r'^test1/', capViews.test1),
+    url(r'^get_count/', capViews.get_count),
+    url(r'^startDetectCount_thread/', capViews.startDetectCount_thread),
+    url(r'^getCountNum_thread/', capViews.getCountNum_thread),
+    url(r'^exitDetectCount_thread/', capViews.exitDetectCount_thread),
     url(r'^getHeatMapNums/', capViews.getHeatMapNums),
     url(r'^getHeatMapScenic/', capViews.getHeatMapScenic),
     url(r'^getHeatMapCamera/', capViews.getHeatMapCamera),

@@ -1,18 +1,71 @@
-import time, datetime, json, random, itertools
+import _thread
+import ctypes
+import inspect
+from threading import Thread
+import datetime
 import decimal
-import numpy as np
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+import json
+import random
+import time
+from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.db import connection
+from django.db.models import Max, Sum
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
-from dateutil.relativedelta import relativedelta
-from django.db.models import Max, Sum
+from static.darkflow_video.run_detect import run
+
+count_list = [-1]
+t = Thread()
+
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
+
+
+def test1(request):
+    data = {'count': count_list[-1]}
+    return HttpResponse(json.dumps(data))
+
+
+def test2():
+    i = 0
+    global count_list
+    while (i < 10):
+        count_list.append(i)
+        i += 1
+        print(i)
+        time.sleep(1)
+    count_list = [-1]
+
+
+def get_count(request):
+    global t
+    t = Thread(target=test2, args=())
+    t.start()
+    # _thread.start_new_thread(test2, ())
+    data = {'msg': '开启线程'}
+    return HttpResponse(json.dumps(data))
 
 
 def test(request):
-    result = Recordnums.objects.filter(minute__modEqual=5).values('scenicid', 'month')
     return render(request, 'test.html')
 
 
@@ -857,3 +910,25 @@ def getScenicInfo(scencid_):
 # 最新预警信息
 def latestwarn(request):
     return render(request, 'latestwarn.html')
+
+
+def getCountNum_thread(request):
+    from static.darkflow_video.darkflow.net.help import current_count
+    data = {'count': current_count}
+    return HttpResponse(json.dumps(data))
+
+
+def startDetectCount_thread(request):
+    vid_name = 'static/video/' + request.POST['vid_name']
+    global t
+    t = Thread(target=run, args=(vid_name,))
+    t.start()
+    # _thread.start_new_thread(run, (vid_name,))
+    data = {'msg': '开启线程'}
+    return HttpResponse(json.dumps(data))
+
+
+def exitDetectCount_thread(request):
+    stop_thread(t)
+    data = {'msg': '结束进程'}
+    return HttpResponse(json.dumps(data))
