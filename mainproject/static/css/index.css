@@ -473,8 +473,9 @@ select, option {
 }
 
 .modal-number {
+    top: 20px;
     position: absolute;
-    color: #ff5858;
+    color: #ff003b;
     font-size: 25px;
     font-weight: bold;
 }

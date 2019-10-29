@@ -202,7 +202,7 @@
                         </div>
                         <div class="modal-body">
                             <p class="modal-number">当前人数:<span id="modal-vid-count">0</span></p>
-                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                            <video id="vid1" height="500px" controls preload="metadata" autoplay="autoplay"></video>
                         </div>
                     </div>
                 </div>
@@ -231,7 +231,7 @@
                         </div>
                         <div class="modal-body">
                             <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>
-                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>
                         </div>
                     </div>
                 </div>
@@ -526,9 +526,9 @@
                                 arg_json = JSON.parse(arg);
                                 // alert(arg_json.msg);
                             }
-                        });
+                         });
 
-                        function getDetectCount_vid1() {
+                        function getDetectCount_vid() {
                             $.ajax({
                                 url: '/getCountNum_thread/',
                                 type: 'POST',
@@ -543,7 +543,7 @@
                             });
                         }
 
-                        vidcount_itv = setInterval(getDetectCount_vid1, 1000);
+                        vidcount_itv = setInterval(getDetectCount_vid, 1000);
                     });
                     map_tour.addOverlay(marker);
                     camera_tour_array.push(marker);
@@ -592,7 +592,7 @@
             }
         });
         // 视频暂停
-        var video = document.getElementById('modal-vid');
+        var video = document.getElementById('vid1');
         video.pause();
     });
 
@@ -732,13 +732,12 @@
                     marker.cam_name = cam_name;
                     // 添加事件
                     marker.addEventListener("click", function (e) {
-                        $("#modal-vid2").modal({
+                        var modal = $("#modal-vid2").modal({
                             backdrop: true, // 相当于data-backdrop
                             keyboard: false, // 相当于data-keyboard
                             show: true, // 相当于data-show
                             remote: "" // 相当于a标签作为触发器的href
                         });
-                        var modal = $("#modal-vid2").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
                         modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
                         modal.find('#modal-vid2-count').text(0);
@@ -755,8 +754,7 @@
                                 // alert(arg_json.msg);
                             }
                         });
-
-                        function getDetectCount_vid1() {
+                        function getDetectCount_vid() {
                             $.ajax({
                                 url: '/getCountNum_thread/',
                                 type: 'POST',
@@ -770,8 +768,7 @@
                                 }
                             });
                         }
-
-                        vidcount_itv = setInterval(getDetectCount_vid1, 1000);
+                        vidcount_itv = setInterval(getDetectCount_vid, 1000);
                     });
                     map.addOverlay(marker);
                     camera_scenic_array.push(marker);
@@ -819,7 +816,7 @@
             }
         });
         // 视频暂停
-        var video = document.getElementById('modal-vid2');
+        var video = document.getElementById('vid2');
         video.pause();
     });
 </script>
