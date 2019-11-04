@@ -32,7 +32,6 @@ class Recordnums(models.Model):
                                 null=True)  # Field name made lowercase.
 
     class Meta:
-
         db_table = 'recordnums'
 
 
@@ -43,6 +42,7 @@ class Recordwarnings(models.Model):
     camid = models.CharField(db_column='camId', max_length=11, blank=True, null=True)  # Field name made lowercase.
     level = models.IntegerField(blank=True, null=True)
     type = models.IntegerField(blank=True, null=True)
+    exceednums = models.IntegerField(max_length=11, blank=True, null=True)
     createat = models.CharField(db_column='createAt', max_length=255, blank=True,
                                 null=True)  # Field name made lowercase.
 

@@ -1,4 +1,3 @@
-import _thread
 import ctypes
 import inspect
 from threading import Thread
@@ -71,14 +70,16 @@ def test(request):
 
 def addData(request):
     # 添加Recordwarnings表
-    for i in range(20):
-        curtime = datetime.datetime.now() + relativedelta(days=i) - relativedelta(years=1)
+    for i in range(31):
+        curtime = datetime.datetime.now() + relativedelta(days=i)
         for j in range(1, 9):
             level = random.randint(1, 3)
-            Recordwarnings.objects.create(scenicid=j, camid=0, level=level, type=1, createat=str(curtime)[:19])
+            exceedNums = random.randint(1, 50) + 50 * (3 - level)
+            Recordwarnings.objects.create(scenicid=j, camid=0, level=level, type=1, exceednums=exceedNums,
+                                          createat=str(curtime)[:19])
     # 添加Recordnums表
-    for i in range(20):
-        curtime = datetime.datetime.now() + relativedelta(days=i) - relativedelta(years=1)
+    for i in range(31):
+        curtime = datetime.datetime.now() + relativedelta(days=i)
         year = curtime.year
         month = curtime.month
         day = curtime.day
@@ -510,10 +511,10 @@ def getWarnRank():
     return context
 
 
-def getNumBar():
+def getNumBarByMonth():
     """
     景区人数变化模块
-    :return: context:{'scenicrank_data':[{'date':'2019-11','nums':人数,'lastyear':人数},...]}
+
     """
     context = {}
     # 当前时间
@@ -528,7 +529,29 @@ def getNumBar():
         numbar_data_lastyear = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         for i in range(len(numbar_data)):
             numbar_data[i]['nums_lastyear'] = numbar_data_lastyear[i]['nums_lastyear']
-        context['numbar_data'] = SafeString(numbar_data)
+        context['numbar_data_bymonth'] = SafeString(numbar_data)
+    return context
+
+
+def getNumBarByDay():
+    """
+    景区人数变化模块
+
+    """
+    context = {}
+    # 当前时间
+    current_time = datetime.datetime.now()
+    with connection.cursor() as cursor:
+        # 查询本月游客人数
+        query = "SELECT CONCAT(`year`,'-',`month`,'-',`day`) as 'date',SUM(nums) as nums FROM recordnums WHERE `year` = %s GROUP BY `year`,`month`,`day` HAVING STR_TO_DATE(date,'%%Y-%%m-%%d')<= STR_TO_DATE(%s,'%%Y-%%m-%%d') ORDER BY STR_TO_DATE(date,'%%Y-%%m-%%d') DESC LIMIT 8"
+        cursor.execute(query, [str(current_time.year), str(current_time)[:10]])
+        numbar_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        query = "SELECT CONCAT(`year`,'-',`month`,'-',`day`) as 'date',SUM(nums) as nums_lastyear FROM recordnums WHERE `year` = %s GROUP BY `year`,`month`,`day` HAVING STR_TO_DATE(date,'%%Y-%%m-%%d')<= STR_TO_DATE(%s,'%%Y-%%m-%%d') ORDER BY STR_TO_DATE(date,'%%Y-%%m-%%d') DESC LIMIT 8"
+        cursor.execute(query, [str(current_time.year - 1), str(current_time - relativedelta(years=1))[:10]])
+        numbar_data_lastyear = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        for i in range(len(numbar_data)):
+            numbar_data[i]['nums_lastyear'] = numbar_data_lastyear[i]['nums_lastyear']
+        context['numbar_data_byday'] = SafeString(numbar_data)
     return context
 
 
@@ -543,7 +566,7 @@ def getCurrentWarn():
     current_time = '2019-09-19 16:10:40'
     with connection.cursor() as cursor:
         # 查询本月游客人数
-        query = "SELECT scenicName,camera.camId,`level`,`type` FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId " \
+        query = "SELECT scenicName,camera.camId,`level`,`type`,exceedNums FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId " \
                 "AND recordwarnings.camId = camera.camId AND createAt = %s ORDER BY createAt DESC,level"
         cursor.execute(query, [current_time])
         curwarn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
@@ -619,8 +642,10 @@ def index(request):
     warnrank_context = getWarnRank()
     context.update(warnrank_context)
     # 景区人数变化模块
-    numbar_context = getNumBar()
-    context.update(numbar_context)
+    numbar_context_month = getNumBarByMonth()
+    context.update(numbar_context_month)
+    numbar_context_day = getNumBarByDay()
+    context.update(numbar_context_day)
     # 当前预警信息模块
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)

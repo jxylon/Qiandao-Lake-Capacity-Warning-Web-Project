@@ -192,7 +192,7 @@
                     src="{% static 'img/fullscreen.svg' %}"
                     alt="fullscreen"></button>
             <div class="modal fade" id="modal-vid">
-                <div class="modal-dialog" style="width:60%">
+                <div class="modal-dialog" style="width:70%">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">
@@ -202,45 +202,49 @@
                         </div>
                         <div class="modal-body">
                             <p class="modal-number">当前人数:<span id="modal-vid-count">0</span></p>
-                            <video id="vid1" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                            <video id="vid1" controls autoplay="autoplay"
+                                   style="height: 100%;width: 100%;object-fit: fill;"></video>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container-block col-md-12" id="heatmap-capacity">
-            <div class="container-header">
-                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>
-                <div class="container-tag">模式二 ： 景区承载力</div>
-
-            </div>
-            <div class="container-content" id="container-heatmap-cap">
-
-            </div>
-            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img
-                    src="{% static 'img/fullscreen.svg' %}"
-                    alt="fullscreen"></button>
-            <div class="modal fade" id="modal-vid2">
-                <div class="modal-dialog" style="width:60%">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h4 class="modal-title">监控视频</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>
-                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+{#        <div class="container-block col-md-12" id="heatmap-capacity">#}
+{#            <div class="container-header">#}
+{#                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>#}
+{#                <div class="container-tag">模式二 ： 景区承载力</div>#}
+{##}
+{#            </div>#}
+{#            <div class="container-content" id="container-heatmap-cap">#}
+{##}
+{#            </div>#}
+{#            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img#}
+{#                    src="{% static 'img/fullscreen.svg' %}"#}
+{#                    alt="fullscreen"></button>#}
+{#            <div class="modal fade" id="modal-vid2">#}
+{#                <div class="modal-dialog" style="width:70%">#}
+{#                    <div class="modal-content">#}
+{#                        <div class="modal-header">#}
+{#                            <button type="button" class="close" data-dismiss="modal">#}
+{#                                <span aria-hidden="true">&times;</span>#}
+{#                            </button>#}
+{#                            <h4 class="modal-title">监控视频</h4>#}
+{#                        </div>#}
+{#                        <div class="modal-body">#}
+{#                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>#}
+{#                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
         <div class="container-block col-md-12" id="numbar">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-                <div class="container-tag">历史数据</div>
+                <select class="container-tag" onchange="numbar_onchange()" id="numbar_selected">
+                    <option class="container-tag" value="1" selected>近8日数据</option>
+                    <option class="container-tag" value="2">近8月数据</option>
+                </select>
             </div>
             <div class="container-content" id="container-numbar">
 
@@ -348,14 +352,17 @@
                     {% if item.type == 1 and item.level == 1 %}
                         <div class="content-curwarn col-md-12"
                              style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% elif item.type == 1 and item.level == 2 %}
                         <div class="content-curwarn col-md-12"
                              style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% elif item.type == 1 and item.level == 3 %}
                         <div class="content-curwarn col-md-12"
                              style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -371,7 +378,7 @@
     var zoom_tour_num = 12;
     var marker_tour_array = [];
     var camera_tour_array = [];
-    map_tour.centerAndZoom(new BMap.Point(119.028693, 29.575992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    map_tour.centerAndZoom(new BMap.Point(118.918175,29.570947), 11);  // 初始化地图,设置中心点坐标和地图级别
     map_tour.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
     map_tour.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
     // 清除所有标注物
@@ -393,7 +400,12 @@
         if (bounce) {
             marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
         }
+        var info_timeout;
         marker.addEventListener("mouseover", function (e) {
+                if (info_timeout != null) {
+                    clearTimeout(info_timeout);
+                    info_timeout = null;
+                }
                 var p = e.target;
                 var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
                 var infoWindow_tour = new BMap.InfoWindow(content, info_window_tour);  // 创建信息窗口对象
@@ -401,7 +413,8 @@
             }
         );
         marker.addEventListener("mouseout", function (e) {
-                map_tour.closeInfoWindow(); //关闭信息窗口
+                clearTimeout(info_timeout);
+                info_timeout = setTimeout("map_tour.closeInfoWindow()", 2000);
             }
         );
         marker.addEventListener("click", function (e) {
@@ -526,7 +539,7 @@
                                 arg_json = JSON.parse(arg);
                                 // alert(arg_json.msg);
                             }
-                         });
+                        });
 
                         function getDetectCount_vid() {
                             $.ajax({
@@ -555,12 +568,12 @@
     // 层级缩放事件
     map_tour.addEventListener("zoomend", function () {
         var zoom_num_now = map_tour.getZoom();
-        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
-        if (zoom_tour_num < 18 && zoom_num_now >= 18) {
+        // 如果之前的层级小于17，而现在的层级大于等于17，加载热力图
+        if (zoom_tour_num < 17 && zoom_num_now >= 17) {
             heatmap_get_tour_camera();
         }
-        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
-        else if (zoom_tour_num >= 18 && zoom_num_now < 18) {
+        // 如果之前的层级大于等于17，而现在的层级小于17，加载摄像头
+        else if (zoom_tour_num >= 17 && zoom_num_now < 17) {
             heatmap_nums();
         }
         zoom_tour_num = zoom_num_now
@@ -595,231 +608,240 @@
         var video = document.getElementById('vid1');
         video.pause();
     });
-
 </script>
-<script type="text/javascript">
-    // 百度地图API功能
-    var map = new BMap.Map("container-heatmap-cap", {enableMapClick: false});    // 创建Map实例
-    var zoom_scenic_num = 12;
-    var marker_scenic_array = [];
-    var camera_scenic_array = [];
-    map.centerAndZoom(new BMap.Point(119.028693, 29.572992), 12);  // 初始化地图,设置中心点坐标和地图级别
-    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
-    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-
-    function addOverHandler_cap(id, name, content, marker, bounce = 1) {
-        var info_window = {
-            width: 200,     // 信息窗口宽度
-            height: 60,     // 信息窗口高度
-            title: name, // 信息窗口标题
-            enableMessage: true//设置允许信息窗发送短息
-        };
-        if (bounce) {
-            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
-        }
-        marker.addEventListener("mouseover", function (e) {
-                var p = e.target;
-                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                var infoWindow = new BMap.InfoWindow(content, info_window);  // 创建信息窗口对象
-                map.openInfoWindow(infoWindow, point); //开启信息窗口
-            }
-        );
-        marker.addEventListener("mouseout", function (e) {
-                map.closeInfoWindow(); //关闭信息窗口
-            }
-        );
-        marker.addEventListener("click", function (e) {
-                if (id == 1)
-                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";
-                else if (id == 2)
-                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";
-                else if (id == 3)
-                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";
-                else if (id == 4)
-                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";
-                else if (id == 5)
-                    window.location.href = "{% url '[capacityWeb]:longsha' %}";
-                else if (id == 6)
-                    window.location.href = "{% url '[capacityWeb]:yule' %}";
-                else if (id == 7)
-                    window.location.href = "{% url '[capacityWeb]:guihua' %}";
-                else if (id == 8)
-                    window.location.href = "{% url '[capacityWeb]:mishan' %}";
-            }
-        );
-    }
-
-    function heatmap_scenic() {
-        // 清除所有摄像头分布
-        clearAllMarkers(map, camera_scenic_array);
-        $.ajax({
-            url: '/getHeatMapScenic/',
-            type: 'POST',
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            async: true,
-            success: function (arg) {
-                // 若调用成功，向地图添加标记
-                var obj_cap = jQuery.parseJSON(arg)[0];
-                rn_obj = obj_cap['rn_data'];
-                var citys = [];
-                for (var i = 0; i < rn_obj.length; i++) {
-                    city = {};
-                    city['name'] = rn_obj[i].scenicName; // 景区名
-                    city['lnglat'] = [rn_obj[i].lng, rn_obj[i].lat]; // 坐标点
-                    city['type'] = 'circle';
-                    var point = new BMap.Point(rn_obj[i].lng, rn_obj[i].lat);
-                    var icon = new BMap.Icon('{% static "img/circle.svg" %}', new BMap.Size(25, 25));
-                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
-                    var nums = rn_obj[i].nums;
-                    var warning1 = rn_obj[i].warning1Nums;
-                    var warning2 = rn_obj[i].warning2Nums;
-                    var warning3 = rn_obj[i].warning3Nums;
-                    if (nums < warning3) {
-                        city['color'] = '#53abff';
-                        city['speed'] = 0.2;
-                        city['status'] = '空闲';
-                    } else if (nums < warning2) {
-                        city['color'] = '#ffb700';
-                        city['speed'] = 0.2;
-                        city['status'] = '拥挤';
-                    } else if (nums < warning1) {
-                        city['color'] = '#ff7e00';
-                        city['speed'] = 0.2;
-                        city['status'] = '饱和';
-                    } else {
-                        city['color'] = '#d81e06';
-                        city['speed'] = 0.5;
-                        city['status'] = '爆满';
-                    }
-                    addOverHandler_cap(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
-                    map.addOverlay(marker);
-                    marker_scenic_array.push(marker);
-                    citys.push(city);
-                }
-                var flashMarkerLayer = new FlashMarker(map, citys);
-            }
-        });
-    }
-
-    var vidcount_itv;
-
-    // 加载摄像头分布
-    function heatmap_get_scenic_camera() {
-        clearAllMarkers(map, marker_scenic_array);
-        $.ajax({
-            url: '/getHeatMapCamera/',
-            type: 'POST',
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            async: true,
-            success: function (arg) {
-                // 若调用成功，向地图添加标记
-                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];
-                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),
-                    {
-                        'anchor': new BMap.Size(10, 20)
-                    });
-                // 统计各摄像头信息
-                for (i = 0; i < camera_obj.length; i++) {
-                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
-                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
-                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';
-                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {
-                        vid_name = 'vid_s1_c2.mp4';
-                    }
-                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
-                    //自定义参数id
-                    marker.vid_name = vid_name;
-                    marker.cam_name = cam_name;
-                    // 添加事件
-                    marker.addEventListener("click", function (e) {
-                        var modal = $("#modal-vid2").modal({
-                            backdrop: true, // 相当于data-backdrop
-                            keyboard: false, // 相当于data-keyboard
-                            show: true, // 相当于data-show
-                            remote: "" // 相当于a标签作为触发器的href
-                        });
-                        modal.find('.modal-title').text(e.target.cam_name);
-                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
-                        modal.find('#modal-vid2-count').text(0);
-                        // 开始检测视频
-                        $.ajax({
-                            url: '/startDetectCount_thread/',
-                            type: 'POST',
-                            data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}', 'vid_name': e.target.vid_name,
-                            },
-                            async: false,
-                            success: function (arg) {
-                                arg_json = JSON.parse(arg);
-                                // alert(arg_json.msg);
-                            }
-                        });
-                        function getDetectCount_vid() {
-                            $.ajax({
-                                url: '/getCountNum_thread/',
-                                type: 'POST',
-                                data: {
-                                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                                },
-                                async: false,
-                                success: function (arg) {
-                                    arg_json = JSON.parse(arg);
-                                    modal.find('#modal-vid2-count').text(arg_json.count);
-                                }
-                            });
-                        }
-                        vidcount_itv = setInterval(getDetectCount_vid, 1000);
-                    });
-                    map.addOverlay(marker);
-                    camera_scenic_array.push(marker);
-                }
-            }
-        });
-    }
-
-    // 层级缩放事件
-    map.addEventListener("zoomend", function () {
-        var zoom_num_now = map.getZoom();
-        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
-        if (zoom_scenic_num < 18 && zoom_num_now >= 18) {
-            heatmap_get_scenic_camera();
-        }
-        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
-        else if (zoom_scenic_num >= 18 && zoom_num_now < 18) {
-            heatmap_scenic();
-        }
-        zoom_scenic_num = zoom_num_now
-    });
-    // 加载事件，首次加载，默认执行
-    map.addEventListener("addtilelayer", function () {
-        heatmap_scenic();
-    });
-    $('#modal-vid2').on('show.bs.modal', function () {
-        var $this = $(this);
-        var $modal_dialog = $this.find('.modal-dialog');
-        $this.css('display', 'block');
-        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
-    });
-    $('#modal-vid2').on('hidden.bs.modal', function () {
-        // 关闭定时
-        clearInterval(vidcount_itv);
-        // 关闭线程
-        $.ajax({
-            url: '/exitDetectCount_thread/',
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            async: false,
-            success: function (arg) {
-                arg_json = JSON.parse(arg);
-            }
-        });
-        // 视频暂停
-        var video = document.getElementById('vid2');
-        video.pause();
-    });
-</script>
+{#<script type="text/javascript">#}
+{#    // 百度地图API功能#}
+{#    var map = new BMap.Map("container-heatmap-cap", {enableMapClick: false});    // 创建Map实例#}
+{#    var zoom_scenic_num = 12;#}
+{#    var marker_scenic_array = [];#}
+{#    var camera_scenic_array = [];#}
+{#    map.centerAndZoom(new BMap.Point(119.028693, 29.572992), 12);  // 初始化地图,设置中心点坐标和地图级别#}
+{#    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的#}
+{#    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放#}
+{##}
+{#    function addOverHandler_cap(id, name, content, marker, bounce = 1) {#}
+{#        var info_window = {#}
+{#            width: 200,     // 信息窗口宽度#}
+{#            height: 60,     // 信息窗口高度#}
+{#            title: name, // 信息窗口标题#}
+{#            enableMessage: true//设置允许信息窗发送短息#}
+{#        };#}
+{#        if (bounce) {#}
+{#            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动#}
+{#        }#}
+{#        var info_timeout;#}
+{#        marker.addEventListener("mouseover", function (e) {#}
+{#                if (info_timeout != null) {#}
+{#                    clearTimeout(info_timeout);#}
+{#                    info_timeout = null;#}
+{#                }#}
+{#                var p = e.target;#}
+{#                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);#}
+{#                var infoWindow = new BMap.InfoWindow(content, info_window);  // 创建信息窗口对象#}
+{#                map.openInfoWindow(infoWindow, point); //开启信息窗口#}
+{#            }#}
+{#        );#}
+{#        marker.addEventListener("mouseout", function () {#}
+{#                clearTimeout(info_timeout);#}
+{#                info_timeout = setTimeout("map.closeInfoWindow()", 2000);#}
+{#            }#}
+{#        );#}
+{#        marker.addEventListener("click", function () {#}
+{#                if (id == 1)#}
+{#                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";#}
+{#                else if (id == 2)#}
+{#                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";#}
+{#                else if (id == 3)#}
+{#                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";#}
+{#                else if (id == 4)#}
+{#                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";#}
+{#                else if (id == 5)#}
+{#                    window.location.href = "{% url '[capacityWeb]:longsha' %}";#}
+{#                else if (id == 6)#}
+{#                    window.location.href = "{% url '[capacityWeb]:yule' %}";#}
+{#                else if (id == 7)#}
+{#                    window.location.href = "{% url '[capacityWeb]:guihua' %}";#}
+{#                else if (id == 8)#}
+{#                    window.location.href = "{% url '[capacityWeb]:mishan' %}";#}
+{#            }#}
+{#        );#}
+{#    }#}
+{##}
+{#    function heatmap_scenic() {#}
+{#        // 清除所有摄像头分布#}
+{#        clearAllMarkers(map, camera_scenic_array);#}
+{#        $.ajax({#}
+{#            url: '/getHeatMapScenic/',#}
+{#            type: 'POST',#}
+{#            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},#}
+{#            async: true,#}
+{#            success: function (arg) {#}
+{#                // 若调用成功，向地图添加标记#}
+{#                var obj_cap = jQuery.parseJSON(arg)[0];#}
+{#                rn_obj = obj_cap['rn_data'];#}
+{#                var citys = [];#}
+{#                for (var i = 0; i < rn_obj.length; i++) {#}
+{#                    city = {};#}
+{#                    city['name'] = rn_obj[i].scenicName; // 景区名#}
+{#                    city['lnglat'] = [rn_obj[i].lng, rn_obj[i].lat]; // 坐标点#}
+{#                    city['type'] = 'circle';#}
+{#                    var point = new BMap.Point(rn_obj[i].lng, rn_obj[i].lat);#}
+{#                    var icon = new BMap.Icon('{% static "img/circle.svg" %}', new BMap.Size(25, 25), {#}
+{#                        'anchor': new BMap.Size(10, 10)#}
+{#                    });#}
+{#                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物#}
+{#                    var nums = rn_obj[i].nums;#}
+{#                    var warning1 = rn_obj[i].warning1Nums;#}
+{#                    var warning2 = rn_obj[i].warning2Nums;#}
+{#                    var warning3 = rn_obj[i].warning3Nums;#}
+{#                    if (nums < warning3) {#}
+{#                        city['color'] = '#53abff';#}
+{#                        city['speed'] = 0.2;#}
+{#                        city['status'] = '空闲';#}
+{#                    } else if (nums < warning2) {#}
+{#                        city['color'] = '#ffb700';#}
+{#                        city['speed'] = 0.2;#}
+{#                        city['status'] = '拥挤';#}
+{#                    } else if (nums < warning1) {#}
+{#                        city['color'] = '#ff7e00';#}
+{#                        city['speed'] = 0.2;#}
+{#                        city['status'] = '饱和';#}
+{#                    } else {#}
+{#                        city['color'] = '#d81e06';#}
+{#                        city['speed'] = 0.5;#}
+{#                        city['status'] = '爆满';#}
+{#                    }#}
+{#                    addOverHandler_cap(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);#}
+{#                    map.addOverlay(marker);#}
+{#                    marker_scenic_array.push(marker);#}
+{#                    citys.push(city);#}
+{#                }#}
+{#                var flashMarkerLayer = new FlashMarker(map, citys);#}
+{#            }#}
+{#        });#}
+{#    }#}
+{##}
+{#    var vidcount_itv;#}
+{##}
+{#    // 加载摄像头分布#}
+{#    function heatmap_get_scenic_camera() {#}
+{#        clearAllMarkers(map, marker_scenic_array);#}
+{#        $.ajax({#}
+{#            url: '/getHeatMapCamera/',#}
+{#            type: 'POST',#}
+{#            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},#}
+{#            async: true,#}
+{#            success: function (arg) {#}
+{#                // 若调用成功，向地图添加标记#}
+{#                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];#}
+{#                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),#}
+{#                    {#}
+{#                        'anchor': new BMap.Size(10, 20)#}
+{#                    });#}
+{#                // 统计各摄像头信息#}
+{#                for (i = 0; i < camera_obj.length; i++) {#}
+{#                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点#}
+{#                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物#}
+{#                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';#}
+{#                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {#}
+{#                        vid_name = 'vid_s1_c2.mp4';#}
+{#                    }#}
+{#                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;#}
+{#                    //自定义参数id#}
+{#                    marker.vid_name = vid_name;#}
+{#                    marker.cam_name = cam_name;#}
+{#                    // 添加事件#}
+{#                    marker.addEventListener("click", function (e) {#}
+{#                        var modal = $("#modal-vid2").modal({#}
+{#                            backdrop: true, // 相当于data-backdrop#}
+{#                            keyboard: false, // 相当于data-keyboard#}
+{#                            show: true, // 相当于data-show#}
+{#                            remote: "" // 相当于a标签作为触发器的href#}
+{#                        });#}
+{#                        modal.find('.modal-title').text(e.target.cam_name);#}
+{#                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);#}
+{#                        modal.find('#modal-vid2-count').text(0);#}
+{#                        // 开始检测视频#}
+{#                        $.ajax({#}
+{#                            url: '/startDetectCount_thread/',#}
+{#                            type: 'POST',#}
+{#                            data: {#}
+{#                                csrfmiddlewaretoken: '{{ csrf_token }}', 'vid_name': e.target.vid_name,#}
+{#                            },#}
+{#                            async: false,#}
+{#                            success: function (arg) {#}
+{#                                arg_json = JSON.parse(arg);#}
+{#                                // alert(arg_json.msg);#}
+{#                            }#}
+{#                        });#}
+{##}
+{#                        function getDetectCount_vid() {#}
+{#                            $.ajax({#}
+{#                                url: '/getCountNum_thread/',#}
+{#                                type: 'POST',#}
+{#                                data: {#}
+{#                                    csrfmiddlewaretoken: '{{ csrf_token }}'#}
+{#                                },#}
+{#                                async: false,#}
+{#                                success: function (arg) {#}
+{#                                    arg_json = JSON.parse(arg);#}
+{#                                    modal.find('#modal-vid2-count').text(arg_json.count);#}
+{#                                }#}
+{#                            });#}
+{#                        }#}
+{##}
+{#                        vidcount_itv = setInterval(getDetectCount_vid, 1000);#}
+{#                    });#}
+{#                    map.addOverlay(marker);#}
+{#                    camera_scenic_array.push(marker);#}
+{#                }#}
+{#            }#}
+{#        });#}
+{#    }#}
+{##}
+{#    // 层级缩放事件#}
+{#    map.addEventListener("zoomend", function () {#}
+{#        var zoom_num_now = map.getZoom();#}
+{#        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图#}
+{#        if (zoom_scenic_num < 18 && zoom_num_now >= 18) {#}
+{#            heatmap_get_scenic_camera();#}
+{#        }#}
+{#        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头#}
+{#        else if (zoom_scenic_num >= 18 && zoom_num_now < 18) {#}
+{#            heatmap_scenic();#}
+{#        }#}
+{#        zoom_scenic_num = zoom_num_now#}
+{#    });#}
+{#    // 加载事件，首次加载，默认执行#}
+{#    map.addEventListener("addtilelayer", function () {#}
+{#        heatmap_scenic();#}
+{#    });#}
+{#    $('#modal-vid2').on('show.bs.modal', function () {#}
+{#        var $this = $(this);#}
+{#        var $modal_dialog = $this.find('.modal-dialog');#}
+{#        $this.css('display', 'block');#}
+{#        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});#}
+{#    });#}
+{#    $('#modal-vid2').on('hidden.bs.modal', function () {#}
+{#        // 关闭定时#}
+{#        clearInterval(vidcount_itv);#}
+{#        // 关闭线程#}
+{#        $.ajax({#}
+{#            url: '/exitDetectCount_thread/',#}
+{#            type: 'POST',#}
+{#            data: {#}
+{#                csrfmiddlewaretoken: '{{ csrf_token }}'#}
+{#            },#}
+{#            async: false,#}
+{#            success: function (arg) {#}
+{#                arg_json = JSON.parse(arg);#}
+{#            }#}
+{#        });#}
+{#        // 视频暂停#}
+{#        var video = document.getElementById('vid2');#}
+{#        video.pause();#}
+{#    });#}
+{#</script>#}
 <script type="text/javascript">
     var chart;
     var chartData1 = {{ scenicrank_data }};
@@ -862,7 +884,7 @@
     graph1.lineAlpha = 0;
     graph1.fillColors = "#607fd9";
     graph1.fillAlphas = 0.8;
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b></span>";
     chart.addGraph(graph1);
 
     // WRITE
@@ -910,74 +932,151 @@
     graph1.lineAlpha = 0;
     graph1.fillColors = "#d92202";
     graph1.fillAlphas = 0.8;
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b></span>";
     chart.addGraph(graph1);
 
     // WRITE
     chart.write("container-warnrank");
 </script>
 <script type="text/javascript">
-    var chart;
-    var chartData3 = {{ numbar_data }};
+    function numbar_data_bymonth() {
+        var chart;
+        var chartData3 = {{ numbar_data_bymonth }};
 
 
-    // SERIAL CHART
-    chart = new AmCharts.AmSerialChart();
-    chart.dataProvider = chartData3.reverse();
-    chart.categoryField = "date";
-    chart.startDuration = 1;
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData3.reverse();
+        chart.categoryField = "date";
+        chart.startDuration = 1;
 
-    chart.handDrawn = true;
-    chart.handDrawnScatter = 3;
+        chart.handDrawn = true;
+        chart.handDrawnScatter = 3;
 
-    // AXES
-    // category
-    var categoryAxis = chart.categoryAxis;
-    categoryAxis.gridPosition = "start";
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
 
-    // value
-    var valueAxis = new AmCharts.ValueAxis();
-    valueAxis.axisAlpha = 0;
-    chart.addValueAxis(valueAxis);
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.axisAlpha = 0;
+        chart.addValueAxis(valueAxis);
 
-    // GRAPHS
-    // column graph
-    var graph1 = new AmCharts.AmGraph();
-    graph1.type = "column";
-    graph1.title = "今年人数";
-    graph1.lineColor = "#00d570";
-    graph1.valueField = "nums";
-    graph1.lineAlpha = 1;
-    graph1.fillAlphas = 1;
-    graph1.dashLengthField = "dashLengthColumn";
-    graph1.alphaField = "alpha";
-    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
-    chart.addGraph(graph1);
+        // GRAPHS
+        // column graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "今年人数";
+        graph1.lineColor = "#00d570";
+        graph1.valueField = "nums";
+        graph1.lineAlpha = 1;
+        graph1.fillAlphas = 1;
+        graph1.dashLengthField = "dashLengthColumn";
+        graph1.alphaField = "alpha";
+        graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph1);
 
-    // line
-    var graph2 = new AmCharts.AmGraph();
-    graph2.type = "line";
-    graph2.title = "去年人数";
-    graph2.lineColor = "#fcd202";
-    graph2.valueField = "nums_lastyear";
-    graph2.lineThickness = 3;
-    graph2.bullet = "round";
-    graph2.bulletBorderThickness = 3;
-    graph2.bulletBorderColor = "#fcd202";
-    graph2.bulletBorderAlpha = 1;
-    graph2.bulletColor = "#ffffff";
-    graph2.dashLengthField = "dashLengthLine";
-    graph2.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
-    chart.addGraph(graph2);
+        // line
+        var graph2 = new AmCharts.AmGraph();
+        graph2.type = "line";
+        graph2.title = "去年人数";
+        graph2.lineColor = "#fcd202";
+        graph2.valueField = "nums_lastyear";
+        graph2.lineThickness = 3;
+        graph2.bullet = "round";
+        graph2.bulletBorderThickness = 3;
+        graph2.bulletBorderColor = "#fcd202";
+        graph2.bulletBorderAlpha = 1;
+        graph2.bulletColor = "#ffffff";
+        graph2.dashLengthField = "dashLengthLine";
+        graph2.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph2);
 
-    // LEGEND
-    // var legend = new AmCharts.AmLegend();
-    // legend.useGraphSettings = true;
-    // legend.position = 'top';
-    // chart.addLegend(legend);
+        // LEGEND
+        // var legend = new AmCharts.AmLegend();
+        // legend.useGraphSettings = true;
+        // legend.position = 'top';
+        // chart.addLegend(legend);
 
-    // WRITE
-    chart.write("container-numbar");
+        // WRITE
+        chart.write("container-numbar");
+    }
+
+    function numbar_data_byday() {
+        var chart;
+        var chartData3 = {{ numbar_data_byday }};
+
+
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData3.reverse();
+        chart.categoryField = "date";
+        chart.startDuration = 1;
+
+        chart.handDrawn = true;
+        chart.handDrawnScatter = 3;
+
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
+
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.axisAlpha = 0;
+        chart.addValueAxis(valueAxis);
+
+        // GRAPHS
+        // column graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "今年人数";
+        graph1.lineColor = "#00d570";
+        graph1.valueField = "nums";
+        graph1.lineAlpha = 1;
+        graph1.fillAlphas = 1;
+        graph1.dashLengthField = "dashLengthColumn";
+        graph1.alphaField = "alpha";
+        graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph1);
+
+        // line
+        var graph2 = new AmCharts.AmGraph();
+        graph2.type = "line";
+        graph2.title = "去年人数";
+        graph2.lineColor = "#fcd202";
+        graph2.valueField = "nums_lastyear";
+        graph2.lineThickness = 3;
+        graph2.bullet = "round";
+        graph2.bulletBorderThickness = 3;
+        graph2.bulletBorderColor = "#fcd202";
+        graph2.bulletBorderAlpha = 1;
+        graph2.bulletColor = "#ffffff";
+        graph2.dashLengthField = "dashLengthLine";
+        graph2.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph2);
+
+        // LEGEND
+        // var legend = new AmCharts.AmLegend();
+        // legend.useGraphSettings = true;
+        // legend.position = 'top';
+        // chart.addLegend(legend);
+
+        // WRITE
+        chart.write("container-numbar");
+    }
+
+    function numbar_onchange() {
+        var numbar_select = document.getElementById("numbar_selected");
+        var v = numbar_select.options[numbar_select.selectedIndex].value;
+        if (v == "1") {
+            numbar_data_byday();
+        } else {
+            numbar_data_bymonth();
+        }
+    }
+    numbar_data_byday();
 </script>
 <script type="text/javascript">
     var chart;
