@@ -494,6 +494,23 @@ def getScenicRank():
     return context
 
 
+def getScenicRankByScenic():
+    """
+    景区人数排行模块
+    :return: context:{'scenicrank_data':[{'scenic':'景区1','nums':人数2},...]}
+    """
+    context = {}
+    # 当前时间
+    current_time = datetime.datetime.now()
+    with connection.cursor() as cursor:
+        # 查询本月游客人数
+        query = "SELECT scenicName as scenic,SUM(nums) as nums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY scenic"
+        cursor.execute(query, [str(current_time)[:7] + '%'])
+        scenicrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        context['scenicrank_bysce_data'] = SafeString(scenicrank_data)
+    return context
+
+
 def getWarnRank():
     """
     预警次数排行模块
@@ -508,6 +525,22 @@ def getWarnRank():
         cursor.execute(query, [str(current_time)[:7] + '%'])
         warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['warnrank_data'] = SafeString(warnrank_data)
+    return context
+
+def getWarnRankByScenic():
+    """
+    预警次数排行模块
+    :return: context:{'warnrank_data':[{'景区1':次数1,'景区2':次数2},...]}
+    """
+    context = {}
+    # 当前时间
+    current_time = datetime.datetime.now()
+    with connection.cursor() as cursor:
+        # 查询本月游客人数
+        query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY scenic"
+        cursor.execute(query, [str(current_time)[:7] + '%'])
+        warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        context['warnrank_bysce_data'] = SafeString(warnrank_data)
     return context
 
 
@@ -599,7 +632,7 @@ def getHeatMapScenic(request):
     # 封装json
     res_json = [{}]
     # query_time = str(datetime.datetime.now())[0:17] + ‘%’
-    query_time = '2019-09-20 15:21%'
+    query_time = '2019-10-06 11:10%'
     with connection.cursor() as cursor:
         query = "SELECT scenic.scenicId,scenic.scenicName,SUM(nums) as nums,warning1Nums,warning2Nums,warning3Nums,lng,lat FROM scenic,recordnums " \
                 "WHERE scenic.scenicId = recordnums.scenicId AND createAt LIKE %s GROUP BY scenicId"
@@ -638,9 +671,13 @@ def index(request):
     # 人数排行模块
     scenicrank_context = getScenicRank()
     context.update(scenicrank_context)
+    scenicrank_bysce_context = getScenicRankByScenic()
+    context.update(scenicrank_bysce_context)
     # 预警排行模块
     warnrank_context = getWarnRank()
     context.update(warnrank_context)
+    warnrank_bysce_context = getWarnRankByScenic()
+    context.update(warnrank_bysce_context)
     # 景区人数变化模块
     numbar_context_month = getNumBarByMonth()
     context.update(numbar_context_month)

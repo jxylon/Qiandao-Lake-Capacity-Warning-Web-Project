@@ -446,8 +446,8 @@ html, body {
 }
 
 .exceed-nums {
-    position: fixed;
-    right: 15px;
+    position: absolute;
+    right: 10px;
     font-size: 12px;
     font-weight: normal;
 }

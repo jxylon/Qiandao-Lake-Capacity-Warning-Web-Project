@@ -413,3 +413,10 @@ select, option {
     font-size: 25px;
     font-weight: bold;
 }
+
+.exceed-nums {
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    font-weight: normal;
+}

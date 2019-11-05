@@ -113,7 +113,7 @@
         this.color = opts.color;
         this.type = opts.type || 'circle';
         this.speed = opts.speed || 0.15;
-        this.size = 0;
+        this.size = 20;
         this.max = opts.max || 20;
     }
 
@@ -233,6 +233,14 @@
             });
 
             map.addEventListener('zoomend', function () {
+                animationFlag = true;
+                markers = [];
+            });
+            map.addEventListener('mousedown', function () {
+                animationFlag = false;
+            });
+
+            map.addEventListener('mouseup', function () {
                 animationFlag = true;
                 markers = [];
             });

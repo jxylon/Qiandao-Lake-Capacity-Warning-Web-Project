@@ -182,8 +182,8 @@
     <div class="col-md-6  col-sm-12" id="col2">
         <div class="container-block col-md-12" id="heatmap-tourist">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-map-marker"></i> 游客人数热力图</div>
-                <div class="container-tag">模式一 ： 游客人数</div>
+                <div class="container-title"><i class="fa fa-map-marker"></i> 人群热力图</div>
+                <div class="container-tag">热力图</div>
             </div>
             <div class="container-content" id="container-heatmap-tour">
 
@@ -209,35 +209,35 @@
                 </div>
             </div>
         </div>
-{#        <div class="container-block col-md-12" id="heatmap-capacity">#}
-{#            <div class="container-header">#}
-{#                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>#}
-{#                <div class="container-tag">模式二 ： 景区承载力</div>#}
-{##}
-{#            </div>#}
-{#            <div class="container-content" id="container-heatmap-cap">#}
-{##}
-{#            </div>#}
-{#            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img#}
-{#                    src="{% static 'img/fullscreen.svg' %}"#}
-{#                    alt="fullscreen"></button>#}
-{#            <div class="modal fade" id="modal-vid2">#}
-{#                <div class="modal-dialog" style="width:70%">#}
-{#                    <div class="modal-content">#}
-{#                        <div class="modal-header">#}
-{#                            <button type="button" class="close" data-dismiss="modal">#}
-{#                                <span aria-hidden="true">&times;</span>#}
-{#                            </button>#}
-{#                            <h4 class="modal-title">监控视频</h4>#}
-{#                        </div>#}
-{#                        <div class="modal-body">#}
-{#                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>#}
-{#                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+        {#        <div class="container-block col-md-12" id="heatmap-capacity">#}
+        {#            <div class="container-header">#}
+        {#                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>#}
+        {#                <div class="container-tag">模式二 ： 景区承载力</div>#}
+        {##}
+        {#            </div>#}
+        {#            <div class="container-content" id="container-heatmap-cap">#}
+        {##}
+        {#            </div>#}
+        {#            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img#}
+        {#                    src="{% static 'img/fullscreen.svg' %}"#}
+        {#                    alt="fullscreen"></button>#}
+        {#            <div class="modal fade" id="modal-vid2">#}
+        {#                <div class="modal-dialog" style="width:70%">#}
+        {#                    <div class="modal-content">#}
+        {#                        <div class="modal-header">#}
+        {#                            <button type="button" class="close" data-dismiss="modal">#}
+        {#                                <span aria-hidden="true">&times;</span>#}
+        {#                            </button>#}
+        {#                            <h4 class="modal-title">监控视频</h4>#}
+        {#                        </div>#}
+        {#                        <div class="modal-body">#}
+        {#                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>#}
+        {#                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
         <div class="container-block col-md-12" id="numbar">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
@@ -338,7 +338,7 @@
                 <div class="container-tag">本月</div>
             </div>
             <div class="piedata-title">游客人数</div>
-            <div class="piedata-title">景区预警</div>
+            <div class="piedata-title">承载力预警</div>
             <div class="container-content" id="container-piedata1"></div>
             <div class="container-content" id="container-piedata2"></div>
         </div>
@@ -374,13 +374,14 @@
 <script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
 <script type="text/javascript">
     // 百度地图API功能，游客人数热力图
-    var map_tour = new BMap.Map("container-heatmap-tour", {enableMapClick: false});    // 创建Map实例
+    var map = new BMap.Map("container-heatmap-tour", {enableMapClick: false});    // 创建Map实例
     var zoom_tour_num = 12;
     var marker_tour_array = [];
     var camera_tour_array = [];
-    map_tour.centerAndZoom(new BMap.Point(118.918175,29.570947), 11);  // 初始化地图,设置中心点坐标和地图级别
-    map_tour.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
-    map_tour.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    map.centerAndZoom(new BMap.Point(118.918175, 29.570947), 11);  // 初始化地图,设置中心点坐标和地图级别
+    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
     // 清除所有标注物
     function clearAllMarkers(map, marker_array) {
         var i;
@@ -401,6 +402,7 @@
             marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
         }
         var info_timeout;
+        // 标注物点击事件
         marker.addEventListener("mouseover", function (e) {
                 if (info_timeout != null) {
                     clearTimeout(info_timeout);
@@ -409,14 +411,16 @@
                 var p = e.target;
                 var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
                 var infoWindow_tour = new BMap.InfoWindow(content, info_window_tour);  // 创建信息窗口对象
-                map_tour.openInfoWindow(infoWindow_tour, point); //开启信息窗口
+                map.openInfoWindow(infoWindow_tour, point); //开启信息窗口
             }
         );
-        marker.addEventListener("mouseout", function (e) {
-                clearTimeout(info_timeout);
-                info_timeout = setTimeout("map_tour.closeInfoWindow()", 2000);
-            }
-        );
+        {#// 标注物鼠标离开事件#}
+        {#marker.addEventListener("mouseout", function (e) {#}
+        {#        clearTimeout(info_timeout);#}
+        {#        info_timeout = setTimeout("map.closeInfoWindow()", 2000);#}
+        {#    }#}
+        {#);#}
+        // 标注物点击事件
         marker.addEventListener("click", function (e) {
                 if (id == 1)
                     window.location.href = "{% url '[capacityWeb]:meifeng' %}";
@@ -438,10 +442,63 @@
         );
     }
 
+    var citys = [];
+
+    function heatmap_scenic() {
+        $.ajax({
+            url: '/getHeatMapScenic/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var obj_cap = jQuery.parseJSON(arg)[0];
+                rn_obj = obj_cap['rn_data'];
+                for (var i = 0; i < rn_obj.length; i++) {
+                    city = {};
+                    city['name'] = rn_obj[i].scenicName; // 景区名
+                    city['lnglat'] = [rn_obj[i].lng, rn_obj[i].lat]; // 坐标点
+                    city['type'] = 'circle';
+                    var point = new BMap.Point(rn_obj[i].lng, rn_obj[i].lat);
+                    var icon = new BMap.Icon('{% static "img/circle.svg" %}', new BMap.Size(5, 5), {
+                        'anchor': new BMap.Size(10, 10)
+                    });
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var nums = rn_obj[i].nums;
+                    var warning1 = rn_obj[i].warning1Nums;
+                    var warning2 = rn_obj[i].warning2Nums;
+                    var warning3 = rn_obj[i].warning3Nums;
+                    city['warning1'] = warning1;
+                    if (nums < warning3) {
+                        city['color'] = '#53abff';
+                        city['speed'] = 0.2;
+                        city['status'] = '空闲';
+                    } else if (nums < warning2) {
+                        city['color'] = '#ffb700';
+                        city['speed'] = 0.2;
+                        city['status'] = '拥挤';
+                    } else if (nums < warning1) {
+                        city['color'] = '#ff7e00';
+                        city['speed'] = 0.2;
+                        city['status'] = '饱和';
+                    } else {
+                        city['color'] = '#d81e06';
+                        city['speed'] = 0.5;
+                        city['status'] = '爆满';
+                    }
+                    map.addOverlay(marker);
+                    marker_tour_array.push(marker);
+                    citys.push(city);
+                }
+                var flashMarkerLayer = new FlashMarker(map, citys);
+            }
+        });
+    }
+
     // 加载热力图
     function heatmap_nums() {
         // 清除所有摄像头分布
-        clearAllMarkers(map_tour, camera_tour_array);
+        clearAllMarkers(map, camera_tour_array);
         // 坐标点
         $.ajax({
             url: '/getHeatMapNums/',
@@ -474,12 +531,13 @@
                 for (var i = 0; i < scenic_points_obj.length; i++) {
                     var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
                     var marker = new BMap.Marker(point); // 标注物
-                    map_tour.addOverlay(marker);
+                    map.addOverlay(marker);
                     marker_tour_array.push(marker);
-                    addOverHandler_tour(i + 1, scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
+                    var info_context = "实时游客量/承载量：" + scenicnums[i] + "/" + citys[i]['warning1'] + "<br>当前状态:" + citys[i]['status'];
+                    addOverHandler_tour(i + 1, scenic_points_obj[i].fields.scenicname, info_context, marker);
                 }
                 heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-                map_tour.addOverlay(heatmapOverlay);
+                map.addOverlay(heatmapOverlay);
                 heatmapOverlay.setDataSet({data: points, max: 1000});
                 heatmapOverlay.show();
             }
@@ -490,7 +548,7 @@
 
     // 加载摄像头分布
     function heatmap_get_tour_camera() {
-        clearAllMarkers(map_tour, marker_tour_array);
+        clearAllMarkers(map, marker_tour_array);
         $.ajax({
             url: '/getHeatMapCamera/',
             type: 'POST',
@@ -558,7 +616,7 @@
 
                         vidcount_itv = setInterval(getDetectCount_vid, 1000);
                     });
-                    map_tour.addOverlay(marker);
+                    map.addOverlay(marker);
                     camera_tour_array.push(marker);
                 }
             }
@@ -566,8 +624,8 @@
     }
 
     // 层级缩放事件
-    map_tour.addEventListener("zoomend", function () {
-        var zoom_num_now = map_tour.getZoom();
+    map.addEventListener("zoomend", function () {
+        var zoom_num_now = map.getZoom();
         // 如果之前的层级小于17，而现在的层级大于等于17，加载热力图
         if (zoom_tour_num < 17 && zoom_num_now >= 17) {
             heatmap_get_tour_camera();
@@ -579,9 +637,10 @@
         zoom_tour_num = zoom_num_now
     });
     // 加载事件，首次加载，默认执行
-    map_tour.addEventListener("addtilelayer", function () {
+    map.addEventListener("addtilelayer", function () {
         heatmap_nums();
     });
+    heatmap_scenic();
     // 视频模态框
     $('#modal-vid').on('show.bs.modal', function () {
         var $this = $(this);
@@ -1076,13 +1135,14 @@
             numbar_data_bymonth();
         }
     }
+
     numbar_data_byday();
 </script>
 <script type="text/javascript">
     var chart;
     var legend;
 
-    var chartData4 = {{ scenicrank_data }};
+    var chartData4 = {{ scenicrank_bysce_data }};
 
     // PIE CHART
     chart = new AmCharts.AmPieChart();
@@ -1103,8 +1163,8 @@
     var chart;
     var legend;
 
-    var chartData5 = {{ warnrank_data }};
-
+    var chartData5 = {{ warnrank_bysce_data }};
+    window.console.log(chartData5);
     // PIE CHART
     chart = new AmCharts.AmPieChart();
     chart.dataProvider = chartData5;
