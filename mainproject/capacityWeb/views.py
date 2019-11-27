@@ -68,6 +68,32 @@ def test(request):
     return render(request, 'test.html')
 
 
+def addTodayData(request):
+    # 添加Recordnums
+    for i in range(60):
+        curtime = datetime.datetime.now() + relativedelta(hour=0, minute=0, second=0) - relativedelta(days=i)
+        print(str(curtime))
+        next_day = curtime.day + 1
+        while curtime.day != next_day:
+            year = curtime.year
+            month = curtime.month
+            day = curtime.day
+            hour = curtime.hour
+            minute = curtime.minute
+            sec = curtime.second
+            for j in range(1, 9):
+                for k in range(1, 16):
+                    nums = random.randint(1, 100)
+                    sce_obj = Scenic(scenicid=j)
+                    cam_obj = Camera(scenicid=sce_obj, camid=k)
+                    Recordnums.objects.create(scenicid=sce_obj, camid=cam_obj, nums=nums, year=year, month=month,
+                                              day=day,
+                                              hour=hour,
+                                              minute=minute, sec=sec, createat=str(curtime)[:19])
+            curtime = curtime + relativedelta(minutes=10)
+    return render(request, 'addTodayData.html')
+
+
 def addData(request):
     # 添加Recordwarnings表
     for i in range(31):
@@ -283,47 +309,46 @@ def getTouristNums():
     current_time = datetime.datetime.now()
     # 所需时间
     time_dic = get_time_dic()
-    # query_time_monday, query_time_sunday = str(time_dic['monday'])[:10], str(time_dic['sunday'])[:10]
-    # query_time_monday_lastweek, query_time_sunday_lastweek = str(time_dic['last_monday'])[:10], str(time_dic['last_sunday'])[:10]
-    query_time_monday, query_time_sunday = '2019-09-22', '2019-09-30'
-    query_time_monday_lastweek, query_time_sunday_lastweek = '2019-09-15', '2019-09-23'
+    # query_time = str(current_time)[:10]
+    # query_time_yesterday = str(current_time - relativedelta(days=1))[:10]
+    query_time = '2019-11-15'
+    query_time_yesterday = '2019-11-14'
     # 去年同日期
-    # monday_lastyear, sunday_lastyear = time_dic['monday'] - relativedelta(years=1), time_dic['sunday'] - relativedelta(years=1)
-    # query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
-    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-22', '2018-09-30'
+    query_time_lastyear = '2018-11-15'
+    # query_time_lastyear = str(current_time - relativedelta(years=1))[:10]
     with connection.cursor() as cursor:
-        # 查询本周游客人数
-        query = "SELECT SUM(nums) as rn_sum_week FROM recordnums WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday, query_time_sunday])
-        rn_sum_week = dictfetchall(cursor)[0]['rn_sum_week']
-        # 查询上一周游客人数
-        query = "SELECT SUM(nums) as rn_sum_week_lastweek FROM recordnums WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday_lastweek, query_time_sunday_lastweek])
-        rn_sum_week_lastweek = dictfetchall(cursor)[0]['rn_sum_week_lastweek']
-        # 查询上一年本周游客人数
-        query = "SELECT SUM(nums) as rn_sum_week_lastyear FROM recordnums WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday_lastyear, query_time_sunday_lastyear])
-        rn_sum_week_lastyear = dictfetchall(cursor)[0]['rn_sum_week_lastyear']
+        # 查询本日游客人数
+        query = "SELECT todayDividual as rn_sum_day FROM mobile WHERE ticketDate = %s"
+        cursor.execute(query, [query_time])
+        rn_sum_day = int(dictfetchall(cursor)[0]['rn_sum_day'])
+        # 查询昨天游客人数
+        query = "SELECT todayDividual as rn_sum_day_yesterday FROM mobile WHERE ticketDate = %s"
+        cursor.execute(query, [query_time_yesterday])
+        rn_sum_day_yesterday = int(dictfetchall(cursor)[0]['rn_sum_day_yesterday'])
+        # 查询上一年本日游客人数
+        query = "SELECT todayDividual as rn_sum_day_lastyear FROM mobile WHERE ticketDate = %s"
+        cursor.execute(query, [query_time_lastyear])
+        rn_sum_day_lastyear = int(dictfetchall(cursor)[0]['rn_sum_day_lastyear'])
         # 查询本月游客人数
-        query = "SELECT SUM(nums) as rn_sum_month FROM recordnums WHERE `year`=%s AND `month` = %s"
+        query = "SELECT SUM(todayTotal) as rn_sum_month FROM mobile WHERE `year`=%s AND `month`=%s"
         # cursor.execute(query, [current_time.year, current_time.month])
-        cursor.execute(query, [2019, 9])
-        rn_sum_month = dictfetchall(cursor)[0]['rn_sum_month']
+        cursor.execute(query, [2019, 11])
+        rn_sum_month = int(dictfetchall(cursor)[0]['rn_sum_month'])
         # 查询上一月游客人数
-        query = "SELECT SUM(nums) as rn_sum_month_lastmonth FROM recordnums WHERE `year`=%s AND `month` = %s"
+        query = "SELECT SUM(todayTotal) as rn_sum_month_lastmonth FROM mobile WHERE `year`=%s AND `month`=%s"
         # cursor.execute(query, [time_dic['lastmonth_year'], time_dic['lastmonth_month']])
-        cursor.execute(query, [2019, 8])
-        rn_sum_month_lastmonth = dictfetchall(cursor)[0]['rn_sum_month_lastmonth']
+        cursor.execute(query, [2019, 10])
+        rn_sum_month_lastmonth = int(dictfetchall(cursor)[0]['rn_sum_month_lastmonth'])
         # 查询上一年本月游客人数
-        query = "SELECT SUM(nums) as rn_sum_month_lastyear FROM recordnums WHERE `year`=%s AND `month` = %s"
+        query = "SELECT SUM(todayTotal) as rn_sum_month_lastyear FROM mobile WHERE `year`=%s AND `month`=%s"
         # cursor.execute(query, [current_time.year - 1, current_time.month])
-        cursor.execute(query, [2018, 9])
-        rn_sum_month_lastyear = dictfetchall(cursor)[0]['rn_sum_month_lastyear']
+        cursor.execute(query, [2018, 11])
+        rn_sum_month_lastyear = int(dictfetchall(cursor)[0]['rn_sum_month_lastyear'])
 
-        context['rn_sum_week'] = rn_sum_week
-        context['rn_sum_week_wow'] = (rn_sum_week - rn_sum_week_lastweek) / (rn_sum_week_lastweek + 1) * 100
-        context['rn_sum_week_yoy'] = (rn_sum_week - rn_sum_week_lastyear) / (rn_sum_week_lastyear + 1) * 100
-        context['rn_sum_month'] = rn_sum_month
+        context['rn_sum_day'] = rn_sum_day * 3
+        context['rn_sum_day_dod'] = (rn_sum_day - rn_sum_day_yesterday) / (rn_sum_day_yesterday + 1) * 100
+        context['rn_sum_day_yoy'] = (rn_sum_day - rn_sum_day_lastyear) / (rn_sum_day_lastyear + 1) * 100
+        context['rn_sum_month'] = rn_sum_month * 3
         context['rn_sum_month_mom'] = (rn_sum_month - rn_sum_month_lastmonth) / (rn_sum_month_lastmonth + 1) * 100
         context['rn_sum_month_yoy'] = (rn_sum_month - rn_sum_month_lastyear) / (rn_sum_month_lastyear + 1) * 100
     return context
@@ -375,26 +400,25 @@ def getWarnNums():
     current_time = datetime.datetime.now()
     # 所需时间
     time_dic = get_time_dic()
-    # query_time_monday, query_time_sunday = str(time_dic['monday'])[:10], str(time_dic['sunday'])[:10]
-    # query_time_monday_lastweek, query_time_sunday_lastweek = str(time_dic['last_monday'])[:10], str(time_dic['last_sunday'])[:10]
-    query_time_monday, query_time_sunday = '2019-09-22', '2019-09-30'
-    query_time_monday_lastweek, query_time_sunday_lastweek = '2019-09-15', '2019-09-23'
+    # query_time = '2019-11-15'
+    # query_time_yesterday = '2019-11-14'
+    query_time = str(current_time)[:10]
+    query_time_yesterday = str(current_time - relativedelta(days=1))[:10]
     # 去年同日期
-    # monday_lastyear, sunday_lastyear = time_dic['monday'] - relativedelta(years=1), time_dic['sunday'] - relativedelta(years=1)
-    # query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
-    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-22', '2018-09-30'
+    # query_time_lastyear = '2018-11-15'
+    query_time_lastyear = str(current_time - relativedelta(years=1))[:10]
     with connection.cursor() as cursor:
-        # 查询本周游客人数
-        query = "SELECT COUNT(warningId) as rw_count_week FROM recordwarnings WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday, query_time_sunday])
+        # 查询本日游客人数
+        query = "SELECT COUNT(warningId) as rw_count_week FROM recordwarnings WHERE createAt LIKE %s"
+        cursor.execute(query, [query_time + '%'])
         rw_count_week = dictfetchall(cursor)[0]['rw_count_week']
-        # 查询上一周游客人数
-        query = "SELECT COUNT(warningId) as rw_count_week_lastweek FROM recordwarnings WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday_lastweek, query_time_sunday_lastweek])
+        # 查询昨天游客人数
+        query = "SELECT COUNT(warningId) as rw_count_week_lastweek FROM recordwarnings WHERE createAt LIKE %s"
+        cursor.execute(query, [query_time_yesterday + '%'])
         rw_count_week_lastweek = dictfetchall(cursor)[0]['rw_count_week_lastweek']
-        # 查询上一年本周游客人数
-        query = "SELECT COUNT(warningId) as rw_count_week_lastyear FROM recordwarnings WHERE createAt > %s AND createAt < %s"
-        cursor.execute(query, [query_time_monday_lastyear, query_time_sunday_lastyear])
+        # 查询上一年本日游客人数
+        query = "SELECT COUNT(warningId) as rw_count_week_lastyear FROM recordwarnings WHERE createAt LIKE %s"
+        cursor.execute(query, [query_time_lastyear + '%'])
         rw_count_week_lastyear = dictfetchall(cursor)[0]['rw_count_week_lastyear']
         # 查询本月游客人数
         query = "SELECT COUNT(warningId) as rw_count_month FROM recordwarnings WHERE createAt LIKE %s"
@@ -486,9 +510,8 @@ def getScenicRank():
     # 当前时间
     current_time = datetime.datetime.now()
     with connection.cursor() as cursor:
-        # 查询本月游客人数
         query = "SELECT scenicName as scenic,SUM(nums) as nums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY nums DESC"
-        cursor.execute(query, [str(current_time)[:7] + '%'])
+        cursor.execute(query, [str(current_time)[:10] + '%'])
         scenicrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['scenicrank_data'] = SafeString(scenicrank_data)
     return context
@@ -505,27 +528,62 @@ def getScenicRankByScenic():
     with connection.cursor() as cursor:
         # 查询本月游客人数
         query = "SELECT scenicName as scenic,SUM(nums) as nums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY scenic"
-        cursor.execute(query, [str(current_time)[:7] + '%'])
+        cursor.execute(query, [str(current_time)[:10] + '%'])
         scenicrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['scenicrank_bysce_data'] = SafeString(scenicrank_data)
     return context
 
 
-def getWarnRank():
+def getWarnRank1():
     """
     预警次数排行模块
     :return: context:{'warnrank_data':[{'景区1':次数1,'景区2':次数2},...]}
     """
     context = {}
     # 当前时间
-    current_time = datetime.datetime.now()
+    current_time = str(datetime.datetime.now())[:10]
+    # current_time = '2019-11-15'
     with connection.cursor() as cursor:
-        # 查询本月游客人数
-        query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
-        cursor.execute(query, [str(current_time)[:7] + '%'])
+        query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '1' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
+        cursor.execute(query, [current_time + '%'])
         warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
-        context['warnrank_data'] = SafeString(warnrank_data)
+        context['warnrank1_data'] = SafeString(warnrank_data)
     return context
+
+
+def getWarnRank2():
+    """
+    预警次数排行模块
+    :return: context:{'warnrank_data':[{'景区1':次数1,'景区2':次数2},...]}
+    """
+    context = {}
+    # 当前时间
+    current_time = str(datetime.datetime.now())[:10]
+    # current_time = '2019-11-15'
+    with connection.cursor() as cursor:
+        query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '2' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
+        cursor.execute(query, [current_time + '%'])
+        warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        context['warnrank2_data'] = SafeString(warnrank_data)
+    return context
+
+
+def getWarnRank3():
+    """
+    预警次数排行模块
+    :return: context:{'warnrank_data':[{'景区1':次数1,'景区2':次数2},...]}
+    """
+    context = {}
+    # 当前时间
+    current_time = str(datetime.datetime.now())[:10]
+    # current_time = '2019-11-15'
+    with connection.cursor() as cursor:
+        query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '3' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
+        cursor.execute(query, [current_time + '%'])
+        warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        context['warnrank3_data'] = SafeString(warnrank_data)
+    return context
+
 
 def getWarnRankByScenic():
     """
@@ -575,7 +633,6 @@ def getNumBarByDay():
     # 当前时间
     current_time = datetime.datetime.now()
     with connection.cursor() as cursor:
-        # 查询本月游客人数
         query = "SELECT CONCAT(`year`,'-',`month`,'-',`day`) as 'date',SUM(nums) as nums FROM recordnums WHERE `year` = %s GROUP BY `year`,`month`,`day` HAVING STR_TO_DATE(date,'%%Y-%%m-%%d')<= STR_TO_DATE(%s,'%%Y-%%m-%%d') ORDER BY STR_TO_DATE(date,'%%Y-%%m-%%d') DESC LIMIT 8"
         cursor.execute(query, [str(current_time.year), str(current_time)[:10]])
         numbar_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
@@ -588,23 +645,62 @@ def getNumBarByDay():
     return context
 
 
-def getCurrentWarn():
+def adjustTime(time_str):
     """
-    当前预警信息模块
-    :return: context:{'scenicrank_data':[{'date':'2019-11','nums':人数,'lastyear':人数},...]}
+    str: 2019-11-20 16:23
+    return: 2019-11-20 16:20
+    """
+    minute = int(time_str[-2:])
+    minute = minute - minute % 10
+    return time_str[:-2] + str(minute)
+
+
+def getNumBarByMin():
+    """
+    景区人数变化模块
+
     """
     context = {}
     # 当前时间
-    # current_time = datetime.datetime.now()
-    current_time = '2019-09-19 16:10:40'
+    current_time = datetime.datetime.now()
     with connection.cursor() as cursor:
-        # 查询本月游客人数
-        query = "SELECT scenicName,camera.camId,`level`,`type`,exceedNums FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId " \
-                "AND recordwarnings.camId = camera.camId AND createAt = %s ORDER BY createAt DESC,level"
-        cursor.execute(query, [current_time])
+        query = "SELECT scenicName as scenic,SUM(nums) as nums,scenic.limitNums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY recordnums.scenicId ORDER BY limitNums DESC"
+        # cursor.execute(query, [adjustTime(str(current_time)[:16]) + '%'])
+        cursor.execute(query, ['2019-11-20 16:20%'])
+        numbar_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
+        for i in range(len(numbar_data)):
+            numbar_data[i]['ratio'] = round(numbar_data[i]['nums'] / numbar_data[i]['limitNums'], 2)
+        context['numbar_data_bymin'] = numbar_data
+    return context
+
+
+def updateNumbar(request):
+    context = getNumBarByMin()
+    numbar_data = json.dumps(context, ensure_ascii=False)
+    return HttpResponse(numbar_data)
+
+
+def getCurrentWarn():
+    """
+    当前预警信息模块
+
+    """
+    context = {}
+    # 当前时间
+    current_time = str(datetime.datetime.now())[:16]
+    # current_time = '2019-11-15 10:30'
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM (SELECT scenicName,camera.camId,`level`,`type`,exceedNums,substring(createAt,12,5) as createAtMin,createAt FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId AND recordwarnings.camId = camera.camId AND createAt <= %s ORDER BY createAt DESC LIMIT 10) temp ORDER BY temp.`level`"
+        cursor.execute(query, [adjustTime(current_time) + ':00'])
         curwarn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['curwarn'] = curwarn_data
     return context
+
+
+def updateCurrentWarn(request):
+    context = getCurrentWarn()
+    curwarn = json.dumps(context, ensure_ascii=False)
+    return HttpResponse(curwarn)
 
 
 def getHeatMapNums(request):
@@ -616,12 +712,12 @@ def getHeatMapNums(request):
     scenic_data = json.loads(scenic_data_seri)
     res_json[0]['scenic_data'] = scenic_data
     # 人数记录表
-    # query_time = str(datetime.datetime.now())[0:17] + ‘%’
-    query_time = '2019-09-20 15:21%'
+    # query_time = str(datetime.datetime.now())[0:16]
+    query_time = '2019-11-15 10:30'
 
     with connection.cursor() as cursor:
         query = "SELECT recordnums.scenicId,recordnums.camId,SUM(nums) AS all_nums,camLng,camLat FROM recordnums,camera WHERE recordnums.camId = camera.camId AND recordnums.scenicId = camera.scenicId AND recordnums.createAt LIKE %s GROUP BY recordnums.scenicId,recordnums.camId"
-        cursor.execute(query, [query_time])
+        cursor.execute(query, [adjustTime(query_time) + '%'])
         rn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         res_json[0]['rn_data'] = rn_data
     res_json_seri = json.dumps(res_json)
@@ -631,12 +727,12 @@ def getHeatMapNums(request):
 def getHeatMapScenic(request):
     # 封装json
     res_json = [{}]
-    # query_time = str(datetime.datetime.now())[0:17] + ‘%’
-    query_time = '2019-10-06 11:10%'
+    # query_time = str(datetime.datetime.now())[0:16]
+    query_time = '2019-11-15 11:10'
     with connection.cursor() as cursor:
         query = "SELECT scenic.scenicId,scenic.scenicName,SUM(nums) as nums,warning1Nums,warning2Nums,warning3Nums,lng,lat FROM scenic,recordnums " \
                 "WHERE scenic.scenicId = recordnums.scenicId AND createAt LIKE %s GROUP BY scenicId"
-        cursor.execute(query, [query_time])
+        cursor.execute(query, [adjustTime(query_time) + '%'])
         rn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         res_json[0]['rn_data'] = rn_data
     res_json_seri = json.dumps(res_json)
@@ -663,29 +759,42 @@ def index(request):
     # 参数
     context = {}
     # 游客人数模块
+    print('游客人数模块')
     tourist_context = getTouristNums()
     context.update(tourist_context)
     # 预警次数模块
+    print('预警次数模块')
     warnnums_context = getWarnNums()
     context.update(warnnums_context)
     # 人数排行模块
+    print('景区人数排行模块')
     scenicrank_context = getScenicRank()
     context.update(scenicrank_context)
-    scenicrank_bysce_context = getScenicRankByScenic()
-    context.update(scenicrank_bysce_context)
     # 预警排行模块
-    warnrank_context = getWarnRank()
-    context.update(warnrank_context)
+    print('预警排行模块')
+    warnrank1_context = getWarnRank1()
+    context.update(warnrank1_context)
+    warnrank2_context = getWarnRank2()
+    context.update(warnrank2_context)
+    warnrank3_context = getWarnRank3()
+    context.update(warnrank3_context)
     warnrank_bysce_context = getWarnRankByScenic()
     context.update(warnrank_bysce_context)
     # 景区人数变化模块
-    numbar_context_month = getNumBarByMonth()
-    context.update(numbar_context_month)
-    numbar_context_day = getNumBarByDay()
-    context.update(numbar_context_day)
+    print('景区人数变化模块')
+    # numbar_context_month = getNumBarByMonth()
+    # context.update(numbar_context_month)
+    # numbar_context_day = getNumBarByDay()
+    # context.update(numbar_context_day)
+    # numbar_context_min = getNumBarByMin()
+    # context.update(numbar_context_min)
     # 当前预警信息模块
+    print('当前预警信息模块')
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)
+    # 今天日期
+    context['today2day'] = str(datetime.datetime.now())[:10]
+    context['today2min'] = str(datetime.datetime.now())[:16]
     return render(request, 'index.html', context=context)
 
 
@@ -994,3 +1103,36 @@ def exitDetectCount_thread(request):
     stop_thread(t)
     data = {'msg': '结束进程'}
     return HttpResponse(json.dumps(data))
+
+
+# 预警分析
+def mf_analysis(request):
+    return render(request, 'mf_analysis.html')
+
+
+def ms_analysis(request):
+    return render(request, 'ms_analysis.html')
+
+
+def ls_analysis(request):
+    return render(request, 'ls_analysis.html')
+
+
+def tc_analysis(request):
+    return render(request, 'tc_analysis.html')
+
+
+def yg_analysis(request):
+    return render(request, 'yg_analysis.html')
+
+
+def yl_analysis(request):
+    return render(request, 'yl_analysis.html')
+
+
+def gh_analysis(request):
+    return render(request, 'gh_analysis.html')
+
+
+def hs_analysis(request):
+    return render(request, 'hs_analysis.html')

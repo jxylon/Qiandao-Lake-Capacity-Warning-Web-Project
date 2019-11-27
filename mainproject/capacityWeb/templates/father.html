@@ -38,7 +38,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖承载量预警平台-{{ NAME }}</a>
+            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台-{{ NAME }}
+            </a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -60,7 +61,7 @@
                         <li class="divider"></li>
                         <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
                         <li class="divider"></li>
-                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>桂花岛</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
                     </ul>
@@ -265,8 +266,9 @@
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
                 <select class="container-tag" onchange="numbar_onchange()" id="numbar_selected">
                     <option class="container-tag" value="1" selected>一小时内</option>
-                    <option class="container-tag" value="2">一周内</option>
-                    <option class="container-tag" value="3">本月内</option>
+                    <option class="container-tag" value="2">一天内</option>
+                    <option class="container-tag" value="3">一周内</option>
+                    <option class="container-tag" value="4">本月内</option>
                 </select>
             </div>
             <div class="container-content" id="container-numbar">
@@ -893,9 +895,13 @@
             iUpdate = setInterval(updateOneHour, 60000)
         }
 
+        function dayLine() {
+            clearInterval(iUpdate);
+            updateDay();
+        }
+
         function weekLine() {
             clearInterval(iUpdate);
-
             updateWeek();
 
         }
@@ -915,6 +921,8 @@
             if (v == "1") {
                 oneHourLine();
             } else if (v == "2") {
+                dayLine();
+            } else if (v == "3") {
                 weekLine();
             } else {
                 monthLine();
@@ -954,6 +962,35 @@
                         }]
                     })
                 })
+        }
+
+        function updateDay() {
+            myChart.setOption({
+                xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " " + t_date.getHours() + "点";
+                        }
+                    },
+                },
+                series: [{
+                    data: {{ start_data_week }},
+                    showSymbol: true,
+                    hoverAnimation: true,
+                }]
+            })
         }
 
         function updateWeek() {

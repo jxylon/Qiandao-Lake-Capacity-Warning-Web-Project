@@ -1,7 +1,7 @@
 html, body {
     width: 100%;
     height: 100%;
-    font-family: 'SimHei', "Microsoft YaHei", monospace;
+    font-family: "Microsoft YaHei", monospace, 'SimHei';
     background-image: url("../img/lake.jpg");
     background-size: 100% 100%;
 }
@@ -260,9 +260,21 @@ html, body {
 }
 
 
-#warnrank {
-    height: 37.5%;
+#warnrank1 {
+    height: 25%;
+    margin-bottom: 0;
+}
 
+#warnrank2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 25%;
+}
+
+#warnrank3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 25%;
 }
 
 
@@ -452,6 +464,17 @@ html, body {
     font-weight: normal;
 }
 
+.happen-time {
+    position: absolute;
+    left: 30px;
+    font-size: 12px;
+}
+
+.nowarning {
+    font-weight: bold;
+    text-align: center;
+    line-height: 200px;
+}
 
 .piedata-title {
     width: 50%;

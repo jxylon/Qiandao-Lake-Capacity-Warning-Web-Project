@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel='stylesheet' href="{% static 'css/Bmap.selfdef.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/analysis.css' %}">
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <title>预警分析</title>
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#mynavbar">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>景区详情<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'capacityWeb:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'capacityWeb:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>桂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>预警分析<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url '[capacityWeb]:mfanalysis' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:hsanalysis' %}"><i class="fa fa-star"></i>黄山尖</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:tcanalysis' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yganalysis' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:lsanalysis' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:ylanalysis' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:ghanalysis' %}"><i class="fa fa-star"></i>桂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:msanalysis' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="content-main">
+    <div class="title">渔乐岛：岛屿概况</div>
+    <div class="sceic-overview">
+        <div class="col-md-8 col-sm-12 img-overview">
+            <img src="{% static 'img/yl.png' %}" height="600px" style="text-align: center" alt="yl">
+        </div>
+        <div class="col-md-4 col-sm-12 content-overview">
+            <div class="line1">渔乐岛</div>
+            <div class="line2"><span class="title-overview">所在湖区：</span>中心湖区</div>
+            <div class="line2"><span class="title-overview">岛屿面积：</span>90亩</div>
+            <div class="line2"><span class="title-overview">停留时间：</span>2h</div>
+            <div class="line2"><span class="title-overview">资源概况：</span>岛上建有中心湖区接待服务设施，集餐饮娱乐、水上运动、休闲观光为一体，是游人身心愉悦、悠然自得的理想场所。</div>
+            <div class="table-overview">
+                <table width="400">
+                    <tr id="line1"><th>岛屿极限容量（人）</th><th>24370</th></tr>
+                    <tr><th>集散地总面积（㎡）</th><th>7185</th></tr>
+                    <tr><th>游道面积（㎡） </th><th>1707</th></tr>
+                    <tr><th>餐厅容量（人） </th><th>18750</th></tr>
+                    <tr><th>公厕容量(人） </th><th>21833</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="dash"></div>
+    <div id="sceic-data" style="text-align: center">
+        <div class="title" style="text-align: left">渔乐岛：容量分析</div>
+        <img src="{% static 'img/yldata.png' %}" width="70%" alt="yldata">
+    </div>
+    <div class="dash"></div>
+    <div id="sceic-data" style="text-align: center">
+        <div class="title" style="text-align: left">渔乐岛：客流分析</div>
+        <img src="{% static 'img/ylscream.png' %}" width="70%" alt="ylscream">
+    </div>
+    <div class="dash"></div>
+</div>
+</body>
+</html>

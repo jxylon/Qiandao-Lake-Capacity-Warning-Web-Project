@@ -17,4 +17,13 @@ urlpatterns = [
     path('mishan/', views.mishan, name='mishan'),
     path('updatetodayTouristNums/', views.updatetodayTouristNums),
     path('getScenicHeartMapData/', views.getScenicHeartMapData),
+    # 预警分析
+    path('mfanalysis/', views.mf_analysis, name='mfanalysis'),
+    path('msanalysis/', views.ms_analysis, name='msanalysis'),
+    path('tcanalysis/', views.tc_analysis, name='tcanalysis'),
+    path('lsanalysis/', views.ls_analysis, name='lsanalysis'),
+    path('ghanalysis/', views.gh_analysis, name='ghanalysis'),
+    path('yganalysis/', views.yg_analysis, name='yganalysis'),
+    path('ylanalysis/', views.yl_analysis, name='ylanalysis'),
+    path('hsanalysis/', views.hs_analysis, name='hsanalysis'),
 ]

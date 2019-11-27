@@ -42,7 +42,7 @@ class Recordwarnings(models.Model):
     camid = models.CharField(db_column='camId', max_length=11, blank=True, null=True)  # Field name made lowercase.
     level = models.IntegerField(blank=True, null=True)
     type = models.IntegerField(blank=True, null=True)
-    exceednums = models.IntegerField(db_column='exceedNums', max_length=11, blank=True, null=True)
+    exceednums = models.IntegerField(db_column='exceedNums',max_length=11, blank=True, null=True)
     createat = models.CharField(db_column='createAt', max_length=255, blank=True,
                                 null=True)  # Field name made lowercase.
 

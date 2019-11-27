@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^latestwarn/', capViews.latestwarn),
     url(r'^test/', capViews.test),
     url(r'^addData/', capViews.addData),
+    url(r'^addTodayData/', capViews.addTodayData),
     # VIEWS URL
     url(r'^test1/', capViews.test1),
     url(r'^get_count/', capViews.get_count),
@@ -34,6 +35,8 @@ urlpatterns = [
     url(r'^getHeatMapNums/', capViews.getHeatMapNums),
     url(r'^getHeatMapScenic/', capViews.getHeatMapScenic),
     url(r'^getHeatMapCamera/', capViews.getHeatMapCamera),
+    url(r'^updateCurrentWarn/', capViews.updateCurrentWarn),
+    url(r'^updateNumbar/', capViews.updateNumbar),
     # 设置二级路由，请保留
     path('capacityWeb/', include('capacityWeb.urls', namespace='capacityWeb')),
 
