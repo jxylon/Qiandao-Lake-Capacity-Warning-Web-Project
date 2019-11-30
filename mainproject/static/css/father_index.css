@@ -1,7 +1,7 @@
 html, body {
     width: 100%;
     height: 100%;
-    font-family: 'SimHei', "Microsoft YaHei", monospace;
+    font-family: "Microsoft YaHei", monospace, 'SimHei';
     background-image: url("../img/lake.jpg");
     background-size: 100% 100%;
 }
@@ -419,4 +419,10 @@ select, option {
     right: 10px;
     font-size: 12px;
     font-weight: normal;
+}
+
+.happen-time {
+    position: absolute;
+    left: 30px;
+    font-size: 12px;
 }

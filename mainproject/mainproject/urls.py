@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^getHeatMapCamera/', capViews.getHeatMapCamera),
     url(r'^updateCurrentWarn/', capViews.updateCurrentWarn),
     url(r'^updateNumbar/', capViews.updateNumbar),
+    url(r'^getAdminInfo/', capViews.getAdminInfo),
     # 设置二级路由，请保留
     path('capacityWeb/', include('capacityWeb.urls', namespace='capacityWeb')),
 

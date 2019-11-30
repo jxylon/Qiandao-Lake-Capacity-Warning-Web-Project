@@ -18,7 +18,7 @@ def getLakeNumbers():
     db = MySQLdb.connect(host="localhost", user="root", password="qq2009", port=3306, db="capacity", charset='utf8')
     cursor = db.cursor()
     table = 'mobile'
-    today = datetime.datetime.now() - relativedelta(days=10)
+    today = datetime.datetime.now() - relativedelta(days=0)
     first_day = datetime.datetime.now() + relativedelta(day=1)
     last_day = first_day + relativedelta(months=1) - relativedelta(days=1)
     while today.day <= last_day.day and today.month == last_day.month:
@@ -141,8 +141,19 @@ def addTodayDataRN():
 
     """
     data = []
-    for i in range(1, 37):
-        curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) + relativedelta(days=i)
+    warn1nums = [3927, 3200, 7798, 3352, 5340, 5605, 1462, 1310]
+    n = 1
+    for i in range(28):
+        curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(years=1, days=i)
+    # n = 2
+    # for i in range(38):
+    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(days=i)
+    # n = 3
+    # for i in range(34):
+    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i) - relativedelta(years=1)
+    # n = 4
+    # for i in range(34):
+    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i)
         next_day = curtime + relativedelta(days=1)
         print(str(curtime))
         while curtime.day != next_day.day:
@@ -153,17 +164,24 @@ def addTodayDataRN():
             minute = curtime.minute
             sec = curtime.second
             for j in range(1, 9):
+                busy = random.randint(1, 30)
+                if busy == 25:
+                    highn = warn1nums[j - 1] // 8
+                    low = warn1nums[j - 1] // 12
+                else:
+                    low = 1
+                    highn = 20
                 for k in range(1, 10):
                     if hour < 19:
-                        nums = random.randint(1, 100)
+                        nums = random.randint(low, highn)
                     else:
-                        nums = 0
+                        nums = random.randint(1, 10)
                     data.append([j, k, nums, year, month, day, hour, minute, sec, str(curtime)[:19]])
             curtime = curtime + relativedelta(minutes=10)
     data_df = pd.DataFrame(data=data,
                            columns=['scenicId', 'camId', 'nums', 'year', 'month', 'day', 'hour', 'minute', 'sec',
                                     'createAt'])
-    data_df.to_csv(file_path + 'recordNumsData.csv', encoding='utf-8')
+    data_df.to_csv(file_path + 'recordNumsData' + str(n) + '.csv', encoding='utf-8')
 
 
 def addTodayDataRW():
@@ -186,6 +204,36 @@ def addTodayDataRW():
             curtime = curtime + relativedelta(minutes=10)
     data_df = pd.DataFrame(data=data, columns=['scenicId', 'camId', 'level', 'type', 'exceedNums', 'createAt'])
     data_df.to_csv(file_path + 'recordWarningData.csv', encoding='utf-8')
+
+
+def get_level(x):
+    level = 1
+    if x['warning1Nums'] <= 0:
+        level += 1
+    if x['warning2Nums'] <= 0:
+        level += 1
+    if x['warning3Nums'] <= 0:
+        level += 1
+    if level == 4:
+        return 0
+    else:
+        return level
+
+
+def compareTodayDataRW():
+    tab_df = pd.read_csv(file_path + 'tab1.csv', header=None, encoding='utf-8')
+    tab_df.columns = ['scenicId', 'nums', 'createAt', 'warning1Nums', 'warning2Nums', 'warning3Nums']
+    tab_df['camId'] = 0
+    tab_df['type'] = 1
+    tab_df['state'] = 1
+    tab_df['warning1Nums'] = tab_df['nums'] - tab_df['warning1Nums']
+    tab_df['warning2Nums'] = tab_df['nums'] - tab_df['warning2Nums']
+    tab_df['warning3Nums'] = tab_df['nums'] - tab_df['warning3Nums']
+    tab_df['level'] = tab_df.apply(lambda x: get_level(x), axis=1)
+    res_df = tab_df[tab_df['level'] > 0].reset_index()
+    res_df['exceedNums'] = res_df.apply(lambda x: x['warning' + str(x['level']) + 'Nums'], axis=1)
+    res_df = res_df.drop(['index', 'nums', 'warning1Nums', 'warning2Nums', 'warning3Nums'], axis=1)
+    res_df.to_csv(file_path + 'rw.csv', encoding='utf-8')
 
 
 if __name__ == '__main__':

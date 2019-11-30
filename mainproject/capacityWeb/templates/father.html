@@ -16,10 +16,8 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.min.js' %}"></script>
     <script src="{% static 'js/echarts.min.js' %}"></script>
-    <script src="{% static 'js/serial.js' %}"></script>
-    <script src="{% static 'js/pie.js' %}"></script>
     <script type="text/javascript"
-            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+            src="http://api.map.baidu.com/api?v=2.0&ak=1CFZXuwC6qpsMqryPHz6s1xzVSjbiKqR"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
     <style>
         .img-logo > img {
@@ -38,8 +36,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台-{{ NAME }}
-            </a>
+            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="logo">千岛湖承载量预警平台-{{ NAME }}</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -66,20 +63,30 @@
                         <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
                     </ul>
                 </li>
-                <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
-                            class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-bar-chart"></i>预警分析<span
+                            class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li><a href="{% url 'capacityWeb:mfanalysis' %}"><i class="fa fa-bar-chart"></i>梅峰岛</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li><a href="{% url 'capacityWeb:hsanalysis' %}"><i class="fa fa-bar-chart"></i>黄山尖</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                        <li><a href="{% url '[capacityWeb]:tcanalysis' %}"><i class="fa fa-bar-chart"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yganalysis' %}"><i class="fa fa-bar-chart"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:lsanalysis' %}"><i class="fa fa-bar-chart"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:ylanalysis' %}"><i class="fa fa-bar-chart"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:ghanalysis' %}"><i class="fa fa-bar-chart"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:msanalysis' %}"><i class="fa fa-bar-chart"></i>蜜山岛</a></li>
                     </ul>
                 </li>
-                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
-                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin_warn' %}"><i class="fa fa-history"></i>预警管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin' %}"><i class="fa fa-folder"></i>后台管理</a></li>
             </ul>
         </div>
     </div>
@@ -195,26 +202,58 @@
                 <!--显示本月环比变化率-->
             </div>
         </div>
+{#        <div class="container-block col-md-12" id="nowwarning">#}
+{#            <div class="container-header">#}
+{#                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>#}
+{#                <div class="container-tag">当前情况</div>#}
+{#            </div>#}
+{#            <div class="container-content" id="container-nowwarning">#}
+{#                {% for item in curwarn %}#}
+{#                    {% if item.type == 1 and item.level == 1 %}#}
+{#                        <div class="content-curwarn col-md-12"#}
+{#                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警#}
+{#                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>#}
+{#                        </div>#}
+{#                    {% elif item.type == 1 and item.level == 2 %}#}
+{#                        <div class="content-curwarn col-md-12"#}
+{#                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警#}
+{#                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>#}
+{#                        </div>#}
+{#                    {% elif item.type == 1 and item.level == 3 %}#}
+{#                        <div class="content-curwarn col-md-12"#}
+{#                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警#}
+{#                            <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        </div>#}
         <div class="container-block col-md-12" id="nowwarning">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
-                <div class="container-tag">当前情况</div>
+                <div class="container-title"><i class="fa fa-warning"></i> 最新预警</div>
+                <div class="container-tag">{{ today2day }}</div>
             </div>
-            <div class="container-content" id="container-nowwarning">
+            <div class="container-content" id="container-warning">
+                {% if not curwarn %}
+                    <div class="nowarning">暂无紧急情况</div>
+                {% endif %}
                 {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
-                        <div class="content-curwarn col-md-12"
-                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        <div class="content-curwarn col-md-12" style="background-color: rgba(255,19,0,0.7)">
+                            <span class="happen-time">- {{ item.createAtMin }} -</span>
+                            {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% elif item.type == 1 and item.level == 2 %}
-                        <div class="content-curwarn col-md-12"
-                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        <div class="content-curwarn col-md-12" style="background-color: rgb(255,163,0);">
+                            <span class="happen-time">- {{ item.createAtMin }} -</span>
+                            {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% elif item.type == 1 and item.level == 3 %}
-                        <div class="content-curwarn col-md-12"
-                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        <div class="content-curwarn col-md-12" style="background-color: rgb(83,171,255);">
+                            <span class="happen-time">- {{ item.createAtMin }} -</span>
+                            {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </div>
                     {% endif %}

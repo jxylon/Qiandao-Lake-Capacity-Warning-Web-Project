@@ -1,38 +1,58 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
 <head>
-    <meta charset="UTF-8">
-    <title>测试</title>
-    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <style type="text/css">
+        body, html, #allmap {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+
+        #l-map {
+            height: 100%;
+            width: 78%;
+            float: left;
+            border-right: 2px solid #bcbcbc;
+        }
+
+        #r-result {
+            height: 100%;
+            width: 20%;
+            float: left;
+        }
+    </style>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=1CFZXuwC6qpsMqryPHz6s1xzVSjbiKqR"></script>
+    <title>添加多个标注点</title>
 </head>
 <body>
-<p id="count">-</p>
-<button onclick="start_thread()">测试</button>
+<div id="allmap"></div>
 </body>
-<script>
-    function start_thread() {
-        $.ajax({
-            url: '/get_count/',
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            success: function (arg) {
-                var arg_json = jQuery.parseJSON(arg);
-                alert(arg_json.msg);
-            }
-        })
-    }
-    function btn_func() {
-        $.ajax({
-            url: '/test1/',
-            type: 'POST',
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            async: true,
-            success: function (arg) {
-                var arg_json = jQuery.parseJSON(arg);
-                document.getElementById('count').innerText = arg_json.count;
-            }
-        })
-    }
-    setInterval(btn_func, 1000);
-</script>
 </html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    var point = new BMap.Point(116.404, 39.915);
+    map.centerAndZoom(point, 15);
+
+    // 编写自定义函数,创建标注
+    function addMarker(point) {
+        var marker = new BMap.Marker(point);
+        map.addOverlay(marker);
+    }
+
+    // 随机向地图添加25个标注
+    var bounds = map.getBounds();
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+    var lngSpan = Math.abs(sw.lng - ne.lng);
+    var latSpan = Math.abs(ne.lat - sw.lat);
+    for (var i = 0; i < 25; i++) {
+        var point = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
+        addMarker(point);
+    }
+</script>

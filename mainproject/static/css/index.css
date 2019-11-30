@@ -434,8 +434,22 @@ html, body {
 }
 
 
-#container-warnrank {
+#container-warnrank1 {
     font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+}
+
+#container-warnrank2 {
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+}
+
+#container-warnrank3 {
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
 }
 
 
@@ -455,6 +469,12 @@ html, body {
     font-weight: bold;
     color: #ffffff;
     margin-top: 3px;
+    text-decoration: none;
+}
+
+a.content-curwarn {
+    text-decoration: none;
+    cursor: default;
 }
 
 .exceed-nums {
@@ -508,4 +528,24 @@ select, option {
     color: #ff003b;
     font-size: 25px;
     font-weight: bold;
+}
+
+#modal-warn {
+    font-size: 16px;
+}
+#modal-warn table{
+    width: 100%;
+}
+
+#modal-warn th {
+    border: 1px solid white;
+    text-align: center;
+}
+
+#modal-warn tr:nth-child(odd) {
+    background: #c8e3eb;
+}
+
+#modal-warn tr:nth-child(even) {
+    background: #E9F0F5;
 }

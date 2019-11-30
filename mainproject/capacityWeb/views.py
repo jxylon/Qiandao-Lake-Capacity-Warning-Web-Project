@@ -9,11 +9,12 @@ import time
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.db import connection
-from django.db.models import Max, Sum
+from django.db.models import Max, Sum, Avg
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.safestring import SafeString
-from .models import Scenic, Recordnums, Recordwarnings, Camera
+from .models import Scenic, Recordnums, Recordwarnings, Camera, Camerainfo, Wifiinfo, WifiNumsMonth, WifiNumsDay, \
+    Adminer
 from static.darkflow_video.run_detect import run
 
 count_list = [-1]
@@ -180,13 +181,12 @@ def getIntervalTouristNums(start, end, scenicid):
     :param end:
     :return: 获得start-end时间端内某岛的人数
     """
-    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
-                                                   month__range=[start.month, end.month],
-                                                   day__range=[start.day, end.day],
-                                                   ).values("nums")
-    sum_ = 0
-    for r in nums_this_Interval:
-        sum_ += r['nums']
+    nums_this_Interval = WifiNumsDay.objects.filter(island_id=scenicid, year__range=[start.year, end.year],
+                                                    month__range=[start.month, end.month],
+                                                    day__range=[start.day, end.day],
+                                                    ).values("island_id").annotate(sum=Sum("nums"))
+    sum_ = nums_this_Interval[0]['sum']
+
     return sum_
 
 
@@ -345,7 +345,7 @@ def getTouristNums():
         cursor.execute(query, [2018, 11])
         rn_sum_month_lastyear = int(dictfetchall(cursor)[0]['rn_sum_month_lastyear'])
 
-        context['rn_sum_day'] = rn_sum_day * 3
+        context['rn_sum_day'] = rn_sum_day * 4
         context['rn_sum_day_dod'] = (rn_sum_day - rn_sum_day_yesterday) / (rn_sum_day_yesterday + 1) * 100
         context['rn_sum_day_yoy'] = (rn_sum_day - rn_sum_day_lastyear) / (rn_sum_day_lastyear + 1) * 100
         context['rn_sum_month'] = rn_sum_month * 3
@@ -510,7 +510,7 @@ def getScenicRank():
     # 当前时间
     current_time = datetime.datetime.now()
     with connection.cursor() as cursor:
-        query = "SELECT scenicName as scenic,SUM(nums) as nums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY nums DESC"
+        query = "SELECT scenicName as scenic,SUM(nums) DIV 9 as nums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY nums DESC"
         cursor.execute(query, [str(current_time)[:10] + '%'])
         scenicrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['scenicrank_data'] = SafeString(scenicrank_data)
@@ -541,11 +541,11 @@ def getWarnRank1():
     """
     context = {}
     # 当前时间
-    current_time = str(datetime.datetime.now())[:10]
+    current_time = datetime.datetime.now()
     # current_time = '2019-11-15'
     with connection.cursor() as cursor:
         query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '1' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
-        cursor.execute(query, [current_time + '%'])
+        cursor.execute(query, [str(current_time)[:10] + '%'])
         warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['warnrank1_data'] = SafeString(warnrank_data)
     return context
@@ -558,11 +558,11 @@ def getWarnRank2():
     """
     context = {}
     # 当前时间
-    current_time = str(datetime.datetime.now())[:10]
+    current_time = datetime.datetime.now()
     # current_time = '2019-11-15'
     with connection.cursor() as cursor:
         query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '2' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
-        cursor.execute(query, [current_time + '%'])
+        cursor.execute(query, [str(current_time)[:10] + '%'])
         warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['warnrank2_data'] = SafeString(warnrank_data)
     return context
@@ -575,11 +575,11 @@ def getWarnRank3():
     """
     context = {}
     # 当前时间
-    current_time = str(datetime.datetime.now())[:10]
+    current_time = datetime.datetime.now()
     # current_time = '2019-11-15'
     with connection.cursor() as cursor:
         query = "SELECT scenicName AS scenic,COUNT(recordwarnings.scenicId) as times FROM recordwarnings,scenic WHERE recordwarnings.scenicId = scenic.scenicId AND `level` = '3' AND createAt LIKE %s GROUP BY scenic.scenicId ORDER BY times DESC"
-        cursor.execute(query, [current_time + '%'])
+        cursor.execute(query, [str(current_time)[:10] + '%'])
         warnrank_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['warnrank3_data'] = SafeString(warnrank_data)
     return context
@@ -665,8 +665,7 @@ def getNumBarByMin():
     current_time = datetime.datetime.now()
     with connection.cursor() as cursor:
         query = "SELECT scenicName as scenic,SUM(nums) as nums,scenic.limitNums FROM recordnums,scenic WHERE recordnums.scenicId = scenic.scenicId AND createAt LIKE %s GROUP BY recordnums.scenicId ORDER BY limitNums DESC"
-        # cursor.execute(query, [adjustTime(str(current_time)[:16]) + '%'])
-        cursor.execute(query, ['2019-11-20 16:20%'])
+        cursor.execute(query, [adjustTime(str(current_time)[:16]) + '%'])
         numbar_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         for i in range(len(numbar_data)):
             numbar_data[i]['ratio'] = round(numbar_data[i]['nums'] / numbar_data[i]['limitNums'], 2)
@@ -687,14 +686,26 @@ def getCurrentWarn():
     """
     context = {}
     # 当前时间
-    current_time = str(datetime.datetime.now())[:16]
+    current_time = datetime.datetime.now()
     # current_time = '2019-11-15 10:30'
     with connection.cursor() as cursor:
-        query = "SELECT * FROM (SELECT scenicName,camera.camId,`level`,`type`,exceedNums,substring(createAt,12,5) as createAtMin,createAt FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId AND recordwarnings.camId = camera.camId AND createAt <= %s ORDER BY createAt DESC LIMIT 10) temp ORDER BY temp.`level`"
-        cursor.execute(query, [adjustTime(current_time) + ':00'])
+        query = "SELECT * FROM (SELECT scenic.scenicId,scenicName,camera.camId,`level`,`type`,exceedNums,substring(createAt,12,5) as createAtMin,createAt,recordwarnings.state FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId AND recordwarnings.camId = camera.camId AND createAt <= %s AND createAt >= %s ORDER BY createAt DESC LIMIT 7) temp ORDER BY temp.`level`"
+        cursor.execute(query, [adjustTime(str(current_time)[:16]) + ':00', str(current_time)[:10]])
         curwarn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['curwarn'] = curwarn_data
     return context
+
+
+def getAdminInfo(request):
+    """
+    当前管理员信息
+
+    """
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM adminer WHERE scenicId = %s"
+        cursor.execute(query, [request.POST['scenicId']])
+        admin_data = json.dumps(dictfetchall(cursor), cls=DecimalEncoder, ensure_ascii=False)
+    return HttpResponse(admin_data)
 
 
 def updateCurrentWarn(request):
@@ -712,8 +723,8 @@ def getHeatMapNums(request):
     scenic_data = json.loads(scenic_data_seri)
     res_json[0]['scenic_data'] = scenic_data
     # 人数记录表
-    # query_time = str(datetime.datetime.now())[0:16]
-    query_time = '2019-11-15 10:30'
+    query_time = str(datetime.datetime.now())[0:16]
+    # query_time = '2019-11-15 10:30'
 
     with connection.cursor() as cursor:
         query = "SELECT recordnums.scenicId,recordnums.camId,SUM(nums) AS all_nums,camLng,camLat FROM recordnums,camera WHERE recordnums.camId = camera.camId AND recordnums.scenicId = camera.scenicId AND recordnums.createAt LIKE %s GROUP BY recordnums.scenicId,recordnums.camId"
@@ -727,8 +738,8 @@ def getHeatMapNums(request):
 def getHeatMapScenic(request):
     # 封装json
     res_json = [{}]
-    # query_time = str(datetime.datetime.now())[0:16]
-    query_time = '2019-11-15 11:10'
+    query_time = str(datetime.datetime.now())[0:16]
+    # query_time = '2019-11-15 11:10'
     with connection.cursor() as cursor:
         query = "SELECT scenic.scenicId,scenic.scenicName,SUM(nums) as nums,warning1Nums,warning2Nums,warning3Nums,lng,lat FROM scenic,recordnums " \
                 "WHERE scenic.scenicId = recordnums.scenicId AND createAt LIKE %s GROUP BY scenicId"
@@ -900,8 +911,12 @@ def getScenicContext(scenicid_):
     numbar_context = todayTouristNumChangeStart(scenicid_)
     context.update(numbar_context)
     # 当前预警信息模块
+    print('当前预警信息模块')
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)
+    # 今天日期
+    context['today2day'] = str(datetime.datetime.now())[:10]
+    context['today2min'] = str(datetime.datetime.now())[:16]
     # 游客人数分布模块
     distribute_context = getTouristDistribute(scenicid_)
     context.update(distribute_context)
@@ -1011,8 +1026,7 @@ def getTodayIntervalTouristNums(scenicid_=1):
 
     :return: 返回当前时间到1小时前的间隔内的数据
     """
-    today_now = datetime.datetime.now() - relativedelta(month=9)  # 改
-    today_now = today_now - relativedelta(days=today_now.day - 28)
+    today_now = datetime.datetime.now()
     # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
     today_start = today_now - relativedelta(minutes=60)
     today_start_str = str(today_start)[:19]
@@ -1038,6 +1052,46 @@ def updatetodayTouristNums(request):
     return JsonResponse(result_send, safe=False)
 
 
+def getTodayIntervalTouristNums2(scenicid_=1):
+    """
+
+    :return: 返回本日内的人数数据
+    """
+    # today_now = datetime.datetime.now()  # 改
+    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30)  # for display
+    # today_now = today_now - relativedelta(days=today_now.day - 28)
+
+    # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
+    today_start = datetime.datetime(today_now.year, today_now.month, today_now.day, 0, 0, 0)
+    today_start_str = str(today_start)[:19]
+    today_now_str = str(today_now)[:19]
+
+    result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=today_start_str,
+                                       createat__lt=today_now_str).values(
+        'hour').annotate(all_nums=Avg('nums')).order_by('hour')
+    result_send = []
+    for r in result:
+        showTime = '{0}-{1}-{2} {3}:{4}:{5}'.format(today_now.year, today_now.month, today_now.day, r['hour'], 0, 0)
+        timeArray = time.strptime(showTime, '%Y-%m-%d %H:%M:%S')
+        timeStamp = int(time.mktime(timeArray)) * 1000
+        nums = r['all_nums']
+        result_item = [timeStamp, nums]
+        result_send.append(result_item)
+    return result_send
+
+
+def updatetodayTouristNums2(request):
+    '''
+
+    :param request:
+    :return: 获得一天内的人数变换
+    '''
+    scenicid = request.GET['scenicid']
+    scenicid = int(scenicid)
+    result_send = getTodayIntervalTouristNums2(scenicid)
+    return JsonResponse(result_send, safe=False)
+
+
 def getTouristDistribute(scencid_):
     '''
 
@@ -1051,18 +1105,17 @@ def getTouristDistribute(scencid_):
     this_year = current_time.year
     last_year = last_time.year
 
-    query_this_year = Recordnums.objects.filter(scenicid=scencid_, year=this_year).values('month'). \
-        annotate(sum_num=Sum('nums'))
-    query_last_year = Recordnums.objects.filter(scenicid=scencid_, year=last_year).values('month'). \
-        annotate(sum_num=Sum('nums'))
+    query_this_year = WifiNumsMonth.objects.filter(island_id=scencid_, year=this_year).values('month', 'nums')
+
+    query_last_year = WifiNumsMonth.objects.filter(island_id=scencid_, year=last_year).values('month', 'nums')
 
     result_this_year = []
     result_last_year = []
     for r in query_last_year:
-        one_month = {'value': r['sum_num'], 'name': r['month']}
+        one_month = {'value': r['nums'], 'name': r['month']}
         result_last_year.append(one_month)
     for r in query_this_year:
-        one_month = {'value': r['sum_num'], 'name': r['month']}
+        one_month = {'value': r['nums'], 'name': r['month']}
         result_this_year.append(one_month)
     result_send = {'distribute_lastYear': result_last_year, 'distribute_thisYear': result_this_year}
     return result_send
@@ -1136,3 +1189,186 @@ def gh_analysis(request):
 
 def hs_analysis(request):
     return render(request, 'hs_analysis.html')
+
+
+def admin(request):
+    return render(request, 'admin.html')
+
+
+def admin_warn(request):
+    return render(request, 'adminWarn.html')
+
+
+def getAdminData(request):
+    recordNums = 1  # 每次加载数据先置1
+    placeResult = Scenic.objects.all().values('scenicid', 'scenicname').order_by('scenicid')
+    cameraResult = Camerainfo.objects.all().values('sciencid', 'cameraid', 'name', 'state', 'adminname',
+                                                   'adminid', 'devicetype').order_by('sciencid', 'cameraid')
+    wifiResult = Wifiinfo.objects.all().values('tvid', 'sciencid', 'name', 'state', 'adminid', 'adminname',
+                                               'devicetype')
+    status = ("关闭", "开启", "异常")
+    rows = []
+
+    for r in wifiResult:
+        location = placeResult[int(r['sciencid']) - 1]['scenicname']
+        data = {"id": r['tvid'], "name": r['name'], "location": location, "status": status[int(r['state'])],
+                "person": r['adminname'], "personId": r['adminid'], "type": r['devicetype'], "index": recordNums,
+                }
+        recordNums += 1
+        rows.append(data)
+
+    for r in cameraResult:
+        location = placeResult[int(r['sciencid']) - 1]['scenicname']
+        data = {"id": r['cameraid'], "name": r['name'], "location": location, "status": status[int(r['state'])],
+                "person": r['adminname'], "personId": r['adminid'], "type": r['devicetype'], "index": recordNums,
+                }
+        recordNums += 1
+        rows.append(data)
+
+    dataList = {
+        "total": 2,
+        "rows": rows
+        # "rows": [{"id": 0, "name": '摄像头一', 'location': '梅峰岛', 'status': '正常', 'person': '陆继鹏', 'personId': 0},
+        #          {"id": 1, "name": '摄像头二', 'location': '梅峰岛', 'status': '正常', 'person': '陈景翔', 'personId': 1},
+        #          {"id": 4, "name": 'AC01', 'location': '梅峰岛', 'status': '正常', 'person': '陈景翔', 'personId': 1}]
+    }
+    return JsonResponse(dataList, safe=False)
+
+
+def deleteAdminData(request):
+    try:
+        id = int(request.GET['id'])
+        type = int(request.GET['type'])
+        willDelete = [Camerainfo, Wifiinfo]
+        willDelete[type].objects.get(pk=id).delete()
+    except Exception:
+        pass
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)
+
+
+def addAdminData(request):
+    print('asd')
+    elements = request.GET['elements']
+
+    elements = elements.replace('true', '1')
+    elements = eval(elements)
+
+    dbs = [Camerainfo, Wifiinfo]
+    db_names = ['摄像头', 'WIFI']
+    scenicResult = Scenic.objects.all().values('scenicname').order_by('scenicid')
+    scenicNames = [r['scenicname'] for r in scenicResult]
+    states = ['关闭', '开启', '异常']
+
+    for e in elements:
+        type = db_names.index(e['type'])
+        sid = scenicNames.index(e['location']) + 1
+        st = states.index(e['status'])
+        try:
+            dbs[type].objects.get(pk=int(e['id'])).delete()
+        except Exception:
+            pass
+
+        if type == 0:  # 插入摄像头数据
+            dbs[type].objects.create(sciencid=int(sid), cameraid=int(e['id']), name=e['name'], state=st,
+                                     adminname=e['person'], adminid=e['personId'], devicetype='摄像头')
+        elif type == 1:  # 插入WIFI数据
+            dbs[type].objects.create(sciencid=int(sid), tvid=int(e['id']), name=e['name'], state=st,
+                                     adminname=e['person'], adminid=e['personId'], devicetype='WIFI')
+
+    # 存入操作
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)
+
+
+def getAdminerData(request):
+    recordNums = 1
+    adminerResults = Adminer.objects.all().values('id', 'name', 'place', 'phone')
+
+    rows = []
+    for r in adminerResults:
+        data = {'index': recordNums, 'id': r['id'], 'name': r['name'], 'place': r['place'], 'phone': r['phone']}
+        recordNums += 1
+        rows.append(data)
+
+    dataList = {
+        "total": recordNums - 1,
+        "rows": rows
+    }
+    return JsonResponse(dataList, safe=False)
+
+
+def deleteAdminerData(request):
+    try:
+        id = int(request.GET['id'])
+        Adminer.objects.get(pk=id).delete()
+    except Exception:
+        pass
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)
+
+
+def addAdminerData(request):
+    element = request.GET['elements']
+    element = element.replace('true', '1')
+    element = eval(element)
+
+    for e in element:
+        id = int(e['id'])
+        Adminer.objects.create(id=int(e['id']), name=e['name'], place=e['place'], phone=e['phone'])
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)
+
+
+def changeState(i):
+    if i == 1:
+        return '未通知'
+    elif i == 2:
+        return '已通知'
+    else:
+        return '已处理'
+
+
+def changeType(i):
+    if i == 1:
+        return '承载量预警'
+    elif i == 2:
+        return '有人出没'
+    else:
+        return '吸烟'
+
+
+def changeLevel(i):
+    return 'I' * i
+
+
+def getWarnData(request):
+    # 当前时间
+    current_time = datetime.datetime.now()
+    # current_time = '2019-11-15'
+    with connection.cursor() as cursor:
+        query = "SELECT warningId,place,`level`,`type`,exceedNums,createAt,`name`,phone,state FROM recordwarnings,adminer WHERE recordwarnings.scenicId = adminer.scenicId AND createAt <= %s ORDER BY state,createAt DESC"
+        cursor.execute(query, [str(current_time)[:16]])
+        warnr_data = dictfetchall(cursor)
+        for i in range(len(warnr_data)):
+            warn_dic = warnr_data[i]
+            warn_dic['state'] = changeState(warn_dic['state'])
+            warn_dic['type'] = changeType(warn_dic['type'])
+            warn_dic['level'] = changeLevel(warn_dic['level'])
+        warnr_data = json.dumps(warnr_data, cls=DecimalEncoder, ensure_ascii=False)
+    return HttpResponse(warnr_data)
+
+
+def notice(request):
+    context = {}
+    with connection.cursor() as cursor:
+        query = "UPDATE recordwarnings SET state = 2 WHERE warningId = %s"
+        # request.POST['warningId']
+        res = cursor.execute(query, [1450])
+        if res:
+            msg = '修改成功'
+        else:
+            msg = '修改失败'
+        context['msg'] = msg
+        data = json.dumps(context, cls=DecimalEncoder, ensure_ascii=False)
+    return HttpResponse(data)

@@ -25,7 +25,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台</a>
+            <a class="navbar-brand" href="{% url 'capacityWeb:index' %}"><img src="{% static 'img/logo.jpg' %}" alt="logo">千岛湖承载量预警平台</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -74,19 +74,8 @@
                         <li><a href="{% url '[capacityWeb]:msanalysis' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
-                            class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
-                    </ul>
-                </li>
-                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
-                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin_warn' %}"><i class="fa fa-history"></i>预警管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin' %}"><i class="fa fa-folder"></i>后台管理</a></li>
             </ul>
         </div>
     </div>

@@ -19,7 +19,7 @@
     <script src="{% static 'js/serial.js' %}"></script>
     <script src="{% static 'js/pie.js' %}"></script>
     <script type="text/javascript"
-            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+            src="http://api.map.baidu.com/api?v=2.0&ak=1CFZXuwC6qpsMqryPHz6s1xzVSjbiKqR"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
 </head>
 <body>
@@ -82,19 +82,8 @@
                         <li><a href="{% url '[capacityWeb]:msanalysis' %}"><i class="fa fa-bar-chart"></i>蜜山岛</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
-                            class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
-                    </ul>
-                </li>
-                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
-                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin_warn' %}"><i class="fa fa-history"></i>预警管理</a></li>
+                <li><a href="{% url '[capacityWeb]:admin' %}"><i class="fa fa-folder"></i>后台管理</a></li>
             </ul>
         </div>
     </div>
@@ -200,23 +189,26 @@
                 {% endif %}
                 {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
-                        <div class="content-curwarn col-md-12" style="background-color: rgba(255,19,0,0.7)">
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                           style="background-color: rgba(255,19,0,0.7)">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
-                        </div>
+                        </a>
                     {% elif item.type == 1 and item.level == 2 %}
-                        <div class="content-curwarn col-md-12" style="background-color: rgb(255,163,0);">
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                           style="background-color: rgb(255,163,0);">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
-                        </div>
+                        </a>
                     {% elif item.type == 1 and item.level == 3 %}
-                        <div class="content-curwarn col-md-12" style="background-color: rgb(83,171,255);">
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                           style="background-color: rgb(83,171,255);">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
-                        </div>
+                        </a>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -251,36 +243,51 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="modal-warn">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">承载量预警</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table>
+                                <tr>
+                                    <th>预警位置</th>
+                                    <th id="scenicPlace"></th>
+                                </tr>
+                                <tr>
+                                    <th>预警等级</th>
+                                    <th id="level"></th>
+                                </tr>
+                                <tr>
+                                    <th>发生时间</th>
+                                    <th id="curtime"></th>
+                                </tr>
+                                <tr>
+                                    <th>超预警人数</th>
+                                    <th id="exceedNums"></th>
+                                </tr>
+                                <tr>
+                                    <th>负责人</th>
+                                    <th id="admin"></th>
+                                </tr>
+                                <tr>
+                                    <th>电话</th>
+                                    <th id="phone"></th>
+                                </tr>
+                                <tr>
+                                    <th>状态</th>
+                                    <th id="state"></th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {#        <div class="container-block col-md-12" id="heatmap-capacity">#}
-        {#            <div class="container-header">#}
-        {#                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>#}
-        {#                <div class="container-tag">模式二 ： 景区承载力</div>#}
-        {##}
-        {#            </div>#}
-        {#            <div class="container-content" id="container-heatmap-cap">#}
-        {##}
-        {#            </div>#}
-        {#            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img#}
-        {#                    src="{% static 'img/fullscreen.svg' %}"#}
-        {#                    alt="fullscreen"></button>#}
-        {#            <div class="modal fade" id="modal-vid2">#}
-        {#                <div class="modal-dialog" style="width:70%">#}
-        {#                    <div class="modal-content">#}
-        {#                        <div class="modal-header">#}
-        {#                            <button type="button" class="close" data-dismiss="modal">#}
-        {#                                <span aria-hidden="true">&times;</span>#}
-        {#                            </button>#}
-        {#                            <h4 class="modal-title">监控视频</h4>#}
-        {#                        </div>#}
-        {#                        <div class="modal-body">#}
-        {#                            <p class="modal-number">当前人数:<span id="modal-vid2-count">0</span></p>#}
-        {#                            <video id="vid2" height="500px" controls preload="metadata" autoplay="autoplay"></video>#}
-        {#                        </div>#}
-        {#                    </div>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#        </div>#}
         <div class="container-block col-md-12" id="numbar">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 景区承载量</div>
@@ -371,23 +378,13 @@
                 {% endif %}
             </div>
         </div>
-        <!--<div class="container-block col-md-12" id="piedata">
-            <div class="container-header">
-                <div class="container-title"><i class="fa fa-pie-chart"></i> 游客人数与预警分布</div>
-                <div class="container-tag">本月</div>
-            </div>
-            <div class="piedata-title">游客人数</div>
-            <div class="piedata-title">承载力预警</div>
-            <div class="container-content" id="container-piedata1"></div>
-            <div class="container-content" id="container-piedata2"></div>
-        </div>-->
         <div class="container-block col-md-12" id="warnrank1">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-list-ul"></i> I级预警排行</div>
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank1">
-
+                今日暂无I级预警
             </div>
         </div>
         <div class="container-block col-md-12" id="warnrank2">
@@ -396,7 +393,9 @@
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank2">
-
+                {% if not warnrank2_data %}
+                    今日暂无II级预警
+                {% endif %}
             </div>
         </div>
         <div class="container-block col-md-12" id="warnrank3">
@@ -405,11 +404,12 @@
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank3">
-
+                {% if not warnrank3_data %}
+                    今日暂无III级预警
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
 </div>
 <script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
 <script type="text/javascript">
@@ -484,6 +484,7 @@
 
     var citys = [];
 
+    // 加载闪动点
     function heatmap_scenic() {
         $.ajax({
             url: '/getHeatMapScenic/',
@@ -615,13 +616,13 @@
                     marker.cam_name = cam_name;
                     // 添加事件
                     marker.addEventListener("click", function (e) {
-                        $("#modal-vid").modal({
+                        var modal = $("#modal-vid").modal({
                             backdrop: true, // 相当于data-backdrop
                             keyboard: false, // 相当于data-keyboard
                             show: true, // 相当于data-show
                             remote: "" // 相当于a标签作为触发器的href
                         });
-                        var modal = $("#modal-vid").modal();
+                        // var modal = $("#modal-vid").modal();
                         modal.find('.modal-title').text(e.target.cam_name);
                         modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
                         modal.find('#modal-vid-count').text(0);
@@ -634,7 +635,7 @@
                             },
                             async: false,
                             success: function (arg) {
-                                arg_json = JSON.parse(arg);
+                                var arg_json = JSON.parse(arg);
                                 // alert(arg_json.msg);
                             }
                         });
@@ -648,7 +649,7 @@
                                 },
                                 async: false,
                                 success: function (arg) {
-                                    arg_json = JSON.parse(arg);
+                                    var arg_json = JSON.parse(arg);
                                     modal.find('#modal-vid-count').text(arg_json.count);
                                 }
                             });
@@ -700,7 +701,7 @@
             },
             async: false,
             success: function (arg) {
-                arg_json = JSON.parse(arg);
+                var arg_json = JSON.parse(arg);
             }
         });
         // 视频暂停
@@ -802,7 +803,9 @@
     chart.addGraph(graph1);
 
     // WRITE
-    chart.write("container-warnrank1");
+    if (chartData2.length != 0) {
+        chart.write("container-warnrank1");
+    }
 </script>
 <script type="text/javascript">
     var chart;
@@ -850,7 +853,9 @@
     chart.addGraph(graph1);
 
     // WRITE
-    chart.write("container-warnrank2");
+    if (chartData2.length != 0) {
+        chart.write("container-warnrank2");
+    }
 </script>
 <script type="text/javascript">
     var chart;
@@ -898,7 +903,9 @@
     chart.addGraph(graph1);
 
     // WRITE
-    chart.write("container-warnrank3");
+    if (chartData2.length != 0) {
+        chart.write("container-warnrank3");
+    }
 </script>
 <script type="text/javascript">
     function update_numbar() {
@@ -936,7 +943,7 @@
                 valueAxis2.axisAlpha = 0;
                 valueAxis2.position = "right";
                 valueAxis2.minimum = 0;
-                valueAxis2.maximum = 1;
+                valueAxis2.maximum = 2;
                 chart.addValueAxis(valueAxis2);
 
                 // GRAPHS
@@ -1056,6 +1063,51 @@
         } else {
             exitFullscreen(obj.id);
         }
+    }
+
+    function showModalWarn(item) {
+        var modal = $("#modal-warn").modal({
+            backdrop: true, // 相当于data-backdrop
+            keyboard: false, // 相当于data-keyboard
+            show: true, // 相当于data-show
+            remote: "" // 相当于a标签作为触发器的href
+        });
+        modal.find('#scenicPlace').text(item.scenicName);
+        modal.find('#level').text(item.level);
+        modal.find('#curtime').text(item.createAt);
+        modal.find('#exceedNums').text(item.exceedNums);
+        var stateId = item.state;
+        var state = null;
+        if (stateId == 1) {
+            state = '未通知';
+        } else {
+            state = '已通知'
+        }
+        modal.find('#state').text(state);
+        $.ajax({
+            url: '/getAdminInfo/',
+            type: 'POST',
+            data: {'scenicId': item.scenicId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: false,
+            success: function (arg) {
+                var admin_data = JSON.parse(arg)[0];
+                modal.find('#admin').text(admin_data.name);
+                modal.find('#phone').text(admin_data.phone);
+            }
+        });
+    }
+
+    function Notice(id) {
+        $.ajax({
+            url: '/capacityWeb/notice/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', 'warningId': id},
+            async: false,
+            success: function (arg) {
+                var res = JSON.parse(arg);
+                alert(res.msg);
+            }
+        });
     }
 </script>
 </body>
