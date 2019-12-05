@@ -38,5 +38,6 @@ urlpatterns = [
     # 预警管理
     path('admin_warn/', views.admin_warn, name='admin_warn'),
     path('getWarnData/', views.getWarnData),
+    path('DetectWarn/', views.DetectWarn),
     path('notice/', views.notice),
 ]

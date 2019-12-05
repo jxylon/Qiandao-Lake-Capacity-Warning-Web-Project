@@ -189,21 +189,21 @@
                 {% endif %}
                 {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
-                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item.warningId }})"
                            style="background-color: rgba(255,19,0,0.7)">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </a>
                     {% elif item.type == 1 and item.level == 2 %}
-                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item.warningId }})"
                            style="background-color: rgb(255,163,0);">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
                             <span class="exceed-nums">超预警值：{{ item.exceedNums }}</span>
                         </a>
                     {% elif item.type == 1 and item.level == 3 %}
-                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item }})"
+                        <a class="content-curwarn col-md-12" onclick="showModalWarn({{ item.warningId }})"
                            style="background-color: rgb(83,171,255);">
                             <span class="happen-time">- {{ item.createAtMin }} -</span>
                             {{ item.scenicName }}-{{ item.level }}级承载量预警
@@ -263,6 +263,10 @@
                                     <th id="level"></th>
                                 </tr>
                                 <tr>
+                                    <th>预警类型</th>
+                                    <th id="type"></th>
+                                </tr>
+                                <tr>
                                     <th>发生时间</th>
                                     <th id="curtime"></th>
                                 </tr>
@@ -281,6 +285,12 @@
                                 <tr>
                                     <th>状态</th>
                                     <th id="state"></th>
+                                </tr>
+                                <tr>
+                                    <th>操作</th>
+                                    <th id="notice">
+                                        <button class="btn btn-info" id="notice_btn">通知</button>
+                                    </th>
                                 </tr>
                             </table>
                         </div>
@@ -384,7 +394,7 @@
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank1">
-                今日暂无I级预警
+                <div class="nowarning2">今日暂无I级预警</div>
             </div>
         </div>
         <div class="container-block col-md-12" id="warnrank2">
@@ -393,9 +403,7 @@
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank2">
-                {% if not warnrank2_data %}
-                    今日暂无II级预警
-                {% endif %}
+                <div class="nowarning2">今日暂无II级预警</div>
             </div>
         </div>
         <div class="container-block col-md-12" id="warnrank3">
@@ -404,9 +412,7 @@
                 <div class="container-tag">本日</div>
             </div>
             <div class="container-content" id="container-warnrank3">
-                {% if not warnrank3_data %}
-                    今日暂无III级预警
-                {% endif %}
+                <div class="nowarning2">今日暂无III级预警</div>
             </div>
         </div>
     </div>
@@ -752,6 +758,7 @@
     graph1.fillColors = "#607fd9";
     graph1.fillAlphas = 0.8;
     graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b></span>";
+    chart.hideBalloonTime = 5000;
     chart.addGraph(graph1);
 
     // WRITE
@@ -760,10 +767,10 @@
 <script type="text/javascript">
     var chart;
 
-    var chartData2 = {{ warnrank1_data }};
+    var chartData1 = {{ warnrank1_data }};
     // SERIAL CHART
     chart = new AmCharts.AmSerialChart();
-    chart.dataProvider = chartData2;
+    chart.dataProvider = chartData1;
     chart.categoryField = "scenic";
     chart.startDuration = 1;
     chart.rotate = true;
@@ -803,27 +810,27 @@
     chart.addGraph(graph1);
 
     // WRITE
-    if (chartData2.length != 0) {
+    if (chartData1.length != 0) {
         chart.write("container-warnrank1");
     }
 </script>
 <script type="text/javascript">
-    var chart;
+    var chart2;
 
     var chartData2 = {{ warnrank2_data }};
     // SERIAL CHART
-    chart = new AmCharts.AmSerialChart();
-    chart.dataProvider = chartData2;
-    chart.categoryField = "scenic";
-    chart.startDuration = 1;
-    chart.rotate = true;
-    chart.marginTop = 2;
-    chart.marginLeft = 0;
-    chart.fontSize = 14;
+    chart2 = new AmCharts.AmSerialChart();
+    chart2.dataProvider = chartData2;
+    chart2.categoryField = "scenic";
+    chart2.startDuration = 1;
+    chart2.rotate = true;
+    chart2.marginTop = 2;
+    chart2.marginLeft = 0;
+    chart2.fontSize = 14;
 
     // AXES
     // category
-    var categoryAxis = chart.categoryAxis;
+    var categoryAxis = chart2.categoryAxis;
     categoryAxis.gridPosition = "start";
     categoryAxis.axisColor = "#c3c3c3";
     categoryAxis.dashLength = 3;
@@ -838,7 +845,7 @@
     valueAxis.minorGridAlpha = 0.08;
     valueAxis.gridAlpha = 0.15;
     valueAxis.fontSize = 10;
-    chart.addValueAxis(valueAxis);
+    chart2.addValueAxis(valueAxis);
 
     // GRAPHS
     // column graph
@@ -850,30 +857,30 @@
     graph1.fillColors = "#ff9900";
     graph1.fillAlphas = 0.8;
     graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b></span>";
-    chart.addGraph(graph1);
+    chart2.addGraph(graph1);
 
     // WRITE
     if (chartData2.length != 0) {
-        chart.write("container-warnrank2");
+        chart2.write("container-warnrank2");
     }
 </script>
 <script type="text/javascript">
-    var chart;
+    var chart3;
 
-    var chartData2 = {{ warnrank3_data }};
+    var chartData3 = {{ warnrank3_data }};
     // SERIAL CHART
-    chart = new AmCharts.AmSerialChart();
-    chart.dataProvider = chartData2;
-    chart.categoryField = "scenic";
-    chart.startDuration = 1;
-    chart.rotate = true;
-    chart.marginTop = 2;
-    chart.marginLeft = 0;
-    chart.fontSize = 14;
+    chart3 = new AmCharts.AmSerialChart();
+    chart3.dataProvider = chartData3;
+    chart3.categoryField = "scenic";
+    chart3.startDuration = 1;
+    chart3.rotate = true;
+    chart3.marginTop = 2;
+    chart3.marginLeft = 0;
+    chart3.fontSize = 14;
 
     // AXES
     // category
-    var categoryAxis = chart.categoryAxis;
+    var categoryAxis = chart3.categoryAxis;
     categoryAxis.gridPosition = "start";
     categoryAxis.axisColor = "#c3c3c3";
     categoryAxis.dashLength = 3;
@@ -888,7 +895,7 @@
     valueAxis.minorGridAlpha = 0.08;
     valueAxis.gridAlpha = 0.15;
     valueAxis.fontSize = 10;
-    chart.addValueAxis(valueAxis);
+    chart3.addValueAxis(valueAxis);
 
     // GRAPHS
     // column graph
@@ -900,11 +907,11 @@
     graph1.fillColors = "#00ced9";
     graph1.fillAlphas = 0.8;
     graph1.balloonText = "<span style='font-size:13px;'>[[title]] - [[category]]:<b>[[value]]</b></span>";
-    chart.addGraph(graph1);
+    chart3.addGraph(graph1);
 
     // WRITE
-    if (chartData2.length != 0) {
-        chart.write("container-warnrank3");
+    if (chartData3.length != 0) {
+        chart3.write("container-warnrank3");
     }
 </script>
 <script type="text/javascript">
@@ -1065,34 +1072,50 @@
         }
     }
 
-    function showModalWarn(item) {
-        var modal = $("#modal-warn").modal({
-            backdrop: true, // 相当于data-backdrop
-            keyboard: false, // 相当于data-keyboard
-            show: true, // 相当于data-show
-            remote: "" // 相当于a标签作为触发器的href
-        });
-        modal.find('#scenicPlace').text(item.scenicName);
-        modal.find('#level').text(item.level);
-        modal.find('#curtime').text(item.createAt);
-        modal.find('#exceedNums').text(item.exceedNums);
-        var stateId = item.state;
-        var state = null;
-        if (stateId == 1) {
-            state = '未通知';
-        } else {
-            state = '已通知'
-        }
-        modal.find('#state').text(state);
+    function repeat(str, n) {
+        return new Array(n + 1).join(str);
+    }
+
+    function showModalWarn(id) {
         $.ajax({
-            url: '/getAdminInfo/',
+            url: '/getWarnDataById/',
             type: 'POST',
-            data: {'scenicId': item.scenicId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', 'scenicId': id},
             async: false,
             success: function (arg) {
-                var admin_data = JSON.parse(arg)[0];
-                modal.find('#admin').text(admin_data.name);
-                modal.find('#phone').text(admin_data.phone);
+                window.console.log(arg);
+                var obj = JSON.parse(arg)[0];
+                var modal = $("#modal-warn").modal({
+                    backdrop: true, // 相当于data-backdrop
+                    keyboard: false, // 相当于data-keyboard
+                    show: true, // 相当于data-show
+                    remote: "" // 相当于a标签作为触发器的href
+                });
+                modal.find('#scenicPlace').text(obj.scenicName);
+                modal.find('#level').text(repeat('I', obj.level));
+                var typeId = obj.type;
+                var typeName = null;
+                if (typeId == 1) {
+                    typeName = '承载量预警';
+                } else if (typeId == 2) {
+                    typeName = '有游客出没';
+                } else {
+                    typeName = '打架';
+                }
+                modal.find('#type').text(typeName);
+                modal.find('#curtime').text(obj.createAt);
+                modal.find('#exceedNums').text(obj.exceedNums);
+                var stateId = obj.state;
+                var state = null;
+                if (stateId == 1) {
+                    state = '未通知';
+                } else {
+                    state = '已通知'
+                }
+                modal.find('#state').text(state);
+                modal.find('#admin').text(obj.name);
+                modal.find('#phone').text(obj.phone);
+                modal.find('#notice_btn').attr("onclick", "Notice( " + id + " )");
             }
         });
     }
@@ -1109,6 +1132,38 @@
             }
         });
     }
+
+    function DetectWarn() {
+        $.ajax({
+            url: '/capacityWeb/DetectWarn/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: false,
+            success: function (arg) {
+                var arg_json = jQuery.parseJSON(arg);
+                var i;
+                for (i = 0; i < arg_json.length; i++) {
+                    obj = arg_json[0];
+                    var level = obj['level'];
+                    var type = obj['type'];
+                    var exceedNums = obj['exceedNums'];
+                    var ScenicName = obj['ScenicName'];
+                    var warningId = obj['warningId'];
+                    var createAt = obj['createAt'];
+                    if (type == 1 && level == 1) {
+                        $('#container-warning').prepend('<a class="content-curwarn col-md-12" onclick="showModalWarn(' + warningId + ')"style="background-color: rgba(255,19,0,0.7)"> <span class="happen-time">- ' + createAt.substr(11, 5) + '  -</span>' + ScenicName + '-1级承载量预警 <span class="exceed-nums">超预警值：' + exceedNums + ' </span> </a>');
+                    } else if (type == 1 && level == 2) {
+                        $('#container-warning').prepend('<a class="content-curwarn col-md-12" onclick="showModalWarn(' + warningId + ')"style="background-color: rgb(255,163,0)"> <span class="happen-time">- ' + createAt.substr(11, 5) + '  -</span>' + ScenicName + ' -2级承载量预警 <span class="exceed-nums">超预警值：' + exceedNums + ' </span> </a>');
+                    } else if (type == 1 && level == 3) {
+                        $('#container-warning').prepend('<a class="content-curwarn col-md-12" onclick="showModalWarn(' + warningId + ')"style="background-color: rgb(83,171,255)"> <span class="happen-time">- ' + createAt.substr(11, 5) + '  -</span>' + ScenicName + ' -3级承载量预警 <span class="exceed-nums">超预警值：' + exceedNums + ' </span> </a>');
+                    }
+                    showModalWarn(warningId);
+                }
+            }
+        });
+    }
+
+    setInterval(DetectWarn, 600000);
 </script>
 </body>
 </html>

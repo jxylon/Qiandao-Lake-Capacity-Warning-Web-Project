@@ -9,7 +9,7 @@ import time
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.db import connection
-from django.db.models import Max, Sum, Avg, Count
+from django.db.models import Max, Sum, Avg
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.safestring import SafeString
@@ -70,30 +70,28 @@ def test(request):
 
 
 def addTodayData(request):
-    # # 添加Recordnums
-    # for i in range(60):
-    #     curtime = datetime.datetime.now() + relativedelta(hour=0, minute=0, second=0) - relativedelta(days=i)
-    #     print(str(curtime))
-    #     next_day = curtime.day + 1
-    #     while curtime.day != next_day:
-    #         year = curtime.year
-    #         month = curtime.month
-    #         day = curtime.day
-    #         hour = curtime.hour
-    #         minute = curtime.minute
-    #         sec = curtime.second
-    #         for j in range(1, 9):
-    #             for k in range(1, 16):
-    #                 nums = random.randint(1, 100)
-    #                 sce_obj = Scenic(scenicid=j)
-    #                 cam_obj = Camera(scenicid=sce_obj, camid=k)
-    #                 Recordnums.objects.create(scenicid=sce_obj, camid=cam_obj, nums=nums, year=year, month=month,
-    #                                           day=day,
-    #                                           hour=hour,
-    #                                           minute=minute, sec=sec, createat=str(curtime)[:19])
-    #         curtime = curtime + relativedelta(minutes=10)
-    # 添加admin数据
-    # Adminer.objects.create(id='90000', name='cjx', place='tcd', phone='11111', scenicid='10')
+    # 添加Recordnums
+    for i in range(60):
+        curtime = datetime.datetime.now() + relativedelta(hour=0, minute=0, second=0) - relativedelta(days=i)
+        print(str(curtime))
+        next_day = curtime.day + 1
+        while curtime.day != next_day:
+            year = curtime.year
+            month = curtime.month
+            day = curtime.day
+            hour = curtime.hour
+            minute = curtime.minute
+            sec = curtime.second
+            for j in range(1, 9):
+                for k in range(1, 16):
+                    nums = random.randint(1, 100)
+                    sce_obj = Scenic(scenicid=j)
+                    cam_obj = Camera(scenicid=sce_obj, camid=k)
+                    Recordnums.objects.create(scenicid=sce_obj, camid=cam_obj, nums=nums, year=year, month=month,
+                                              day=day,
+                                              hour=hour,
+                                              minute=minute, sec=sec, createat=str(curtime)[:19])
+            curtime = curtime + relativedelta(minutes=10)
     return render(request, 'addTodayData.html')
 
 
@@ -691,11 +689,23 @@ def getCurrentWarn():
     current_time = datetime.datetime.now()
     # current_time = '2019-11-15 10:30'
     with connection.cursor() as cursor:
-        query = "SELECT * FROM (SELECT scenic.scenicId,warningId,scenicName,camera.camId,`level`,`type`,exceedNums,substring(createAt,12,5) as createAtMin,createAt,recordwarnings.state FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId AND recordwarnings.camId = camera.camId AND createAt <= %s AND createAt >= %s ORDER BY createAt DESC LIMIT 7) temp ORDER BY temp.`level`"
+        query = "SELECT * FROM (SELECT scenic.scenicId,scenicName,camera.camId,`level`,`type`,exceedNums,substring(createAt,12,5) as createAtMin,createAt,recordwarnings.state FROM scenic,recordwarnings,camera WHERE recordwarnings.scenicId = scenic.scenicId AND recordwarnings.scenicId = camera.scenicId AND recordwarnings.camId = camera.camId AND createAt <= %s AND createAt >= %s ORDER BY createAt DESC LIMIT 7) temp ORDER BY temp.`level`"
         cursor.execute(query, [adjustTime(str(current_time)[:16]) + ':00', str(current_time)[:10]])
         curwarn_data = json.loads(json.dumps(dictfetchall(cursor), cls=DecimalEncoder))
         context['curwarn'] = curwarn_data
     return context
+
+
+def getAdminInfo(request):
+    """
+    当前管理员信息
+
+    """
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM adminer WHERE scenicId = %s"
+        cursor.execute(query, [request.POST['scenicId']])
+        admin_data = json.dumps(dictfetchall(cursor), cls=DecimalEncoder, ensure_ascii=False)
+    return HttpResponse(admin_data)
 
 
 def updateCurrentWarn(request):
@@ -1047,8 +1057,8 @@ def getTodayIntervalTouristNums2(scenicid_=1):
 
     :return: 返回本日内的人数数据
     """
-    today_now = datetime.datetime.now()  # 改
-
+    # today_now = datetime.datetime.now()  # 改
+    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30)  # for display
     # today_now = today_now - relativedelta(days=today_now.day - 28)
 
     # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
@@ -1249,8 +1259,6 @@ def addAdminData(request):
     scenicResult = Scenic.objects.all().values('scenicname').order_by('scenicid')
     scenicNames = [r['scenicname'] for r in scenicResult]
     states = ['关闭', '开启', '异常']
-    cameraNums_query = Camerainfo.objects.values('sciencid').order_by('sciencid').annotate(deviceNums=Count('cameraid'))
-    cameraNums_list = [r['deviceNums'] for r in cameraNums_query]
 
     for e in elements:
         type = db_names.index(e['type'])
@@ -1262,9 +1270,7 @@ def addAdminData(request):
             pass
 
         if type == 0:  # 插入摄像头数据
-            cameraNums_list[sid - 1] += 1
-            camid = cameraNums_list[sid - 1]
-            dbs[type].objects.create(camid=camid, sciencid=int(sid), cameraid=int(e['id']), name=e['name'], state=st,
+            dbs[type].objects.create(sciencid=int(sid), cameraid=int(e['id']), name=e['name'], state=st,
                                      adminname=e['person'], adminid=e['personId'], devicetype='摄像头')
         elif type == 1:  # 插入WIFI数据
             dbs[type].objects.create(sciencid=int(sid), tvid=int(e['id']), name=e['name'], state=st,
@@ -1306,13 +1312,10 @@ def addAdminerData(request):
     element = request.GET['elements']
     element = element.replace('true', '1')
     element = eval(element)
-    island_ids_query = Scenic.objects.all().values('scenicname').order_by('scenicid')
-    island_ids_list = [r['scenicname'] for r in island_ids_query]
 
     for e in element:
         id = int(e['id'])
-        island_id = island_ids_list.index(e['place']) + 1
-        Adminer.objects.create(id=int(e['id']), name=e['name'], place=e['place'], phone=e['phone'], scenicid=island_id)
+        Adminer.objects.create(id=int(e['id']), name=e['name'], place=e['place'], phone=e['phone'])
     noMeans = {'n': 'n'}
     return JsonResponse(noMeans, safe=False)
 
@@ -1360,30 +1363,12 @@ def notice(request):
     context = {}
     with connection.cursor() as cursor:
         query = "UPDATE recordwarnings SET state = 2 WHERE warningId = %s"
-        res = cursor.execute(query, [request.POST['warningId']])
+        # request.POST['warningId']
+        res = cursor.execute(query, [1450])
         if res:
-            msg = '通知成功'
+            msg = '修改成功'
         else:
-            msg = '通知失败'
+            msg = '修改失败'
         context['msg'] = msg
         data = json.dumps(context, cls=DecimalEncoder, ensure_ascii=False)
     return HttpResponse(data)
-
-
-def DetectWarn(request):
-    # 当前时间
-    # current_time = datetime.datetime.now()
-    current_time = datetime.datetime.now() + relativedelta(hour=18, minute=50, second=13)
-    with connection.cursor() as cursor:
-        query = "SELECT warningId,place as ScenicName,`level`,`type`,exceedNums,createAt,`name`,phone,state FROM recordwarnings,adminer WHERE createAt >= %s AND createAt <= %s AND recordwarnings.scenicId = adminer.scenicId;"
-        cursor.execute(query, [str(current_time - relativedelta(minutes=1))[:19], str(current_time)[:19]])
-        warnr_data = json.dumps(dictfetchall(cursor), cls=DecimalEncoder, ensure_ascii=False)
-    return HttpResponse(warnr_data)
-
-
-def getWarnDataById(request):
-    with connection.cursor() as cursor:
-        query = "SELECT scenicName,`level`,type,createAt,exceedNums,state,`name`,phone FROM recordwarnings,adminer,scenic WHERE warningId = %s AND recordwarnings.scenicId = adminer.scenicId AND recordwarnings.scenicId = scenic.scenicId;"
-        cursor.execute(query, [request.POST['scenicId']])
-        warnr_data = json.dumps(dictfetchall(cursor), cls=DecimalEncoder, ensure_ascii=False)
-    return HttpResponse(warnr_data)

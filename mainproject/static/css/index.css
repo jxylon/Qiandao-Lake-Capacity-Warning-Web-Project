@@ -256,7 +256,6 @@ html, body {
 
 #scenicrank {
     height: 37%;
-
 }
 
 
@@ -434,24 +433,23 @@ html, body {
 }
 
 
-#container-warnrank1 {
+.nowarning2 {
     font-weight: bold;
     text-align: center;
     line-height: 100px;
+}
+
+#container-warnrank1 {
+    font-weight: bold;
 }
 
 #container-warnrank2 {
     font-weight: bold;
-    text-align: center;
-    line-height: 100px;
 }
 
 #container-warnrank3 {
     font-weight: bold;
-    text-align: center;
-    line-height: 100px;
 }
-
 
 #piedata > .container-content {
     width: 50%;
@@ -533,7 +531,8 @@ select, option {
 #modal-warn {
     font-size: 16px;
 }
-#modal-warn table{
+
+#modal-warn table {
     width: 100%;
 }
 
