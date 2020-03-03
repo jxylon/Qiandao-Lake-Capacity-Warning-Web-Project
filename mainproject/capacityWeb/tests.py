@@ -7,7 +7,23 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import MySQLdb
 
-file_path = "D:/Documents/HDU421/"
+file_path = "/home/jxylon/Documents/"
+
+
+def changeTicketDate(x):
+    l = x.split('-')
+    return '2020-' + l[1] + '-' + l[2]
+
+
+def readLakeNumbers():
+    mobile_df = pd.read_csv(file_path + 'mobile.csv', header=None, delimiter=',', encoding='utf-8')
+    mobile_df.columns = ['id', 'todayDividual', 'todayTeam', 'todayTotal', 'centerDividual', 'centerTeam', 'centerIn',
+                         'eastsouthDividual', 'eastsouthTeam', 'eastSouthIn', 'forestBar', 'lionCity', 'year', 'month',
+                         'day', 'ticketDate']
+    mobile_df = mobile_df.drop(['id'], axis=1)
+    mobile_df['year'] = 2020
+    mobile_df['ticketDate'] = mobile_df[['ticketDate']].applymap(lambda x: changeTicketDate(x))
+    mobile_df.to_csv(file_path + 'mobile1.csv', index=None)
 
 
 def getLakeNumbers():
@@ -18,24 +34,28 @@ def getLakeNumbers():
     db = MySQLdb.connect(host="localhost", user="root", password="qq2009", port=3306, db="capacity", charset='utf8')
     cursor = db.cursor()
     table = 'mobile'
-    today = datetime.datetime.now() - relativedelta(days=0)
-    first_day = datetime.datetime.now() + relativedelta(day=1)
+    today = datetime.datetime.now() + relativedelta(month=3, day=1)
+    first_day = today + relativedelta(day=1)
     last_day = first_day + relativedelta(months=1) - relativedelta(days=1)
     while today.day <= last_day.day and today.month == last_day.month:
         date = str(today)[:10]
         result = requests.get(url, 'date=' + date).json()[0]
         today = today + relativedelta(days=1)
+        forestBar = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
+        lionCity = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
         try:
             data = {
                 'todayDividual': result['todayDividual'],
                 'todayTeam': result['todayTeam'],
                 'todayTotal': result['todayTotal'],
-                'centerDividual': result['result']['centerDividual'],
+                'centerDividual': result['result']['centerDividual'] - lionCity - forestBar,
                 'centerTeam': result['result']['centerTeam'],
-                'centerIn': result['result']['centerIn'],
+                'centerIn': result['result']['centerIn'] - lionCity - forestBar,
                 'eastsouthDividual': result['result']['eastsouthDividual'],
                 'eastsouthTeam': result['result']['eastsouthTeam'],
                 'eastSouthIn': result['result']['eastSouthIn'],
+                'forestBar': forestBar,
+                'lionCIty': lionCity,
                 'year': date.split('-')[0],
                 'month': date.split('-')[1],
                 'day': date.split('-')[2],
@@ -143,20 +163,22 @@ def addTodayDataRN():
     data = []
     warn1nums = [3927, 3200, 7798, 3352, 5340, 5605, 1462, 1310]
     n = 1
-    for i in range(28):
-        curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(years=1, days=i)
-    # n = 2
-    # for i in range(38):
-    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(days=i)
-    # n = 3
-    # for i in range(34):
-    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i) - relativedelta(years=1)
-    # n = 4
-    # for i in range(34):
-    #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i)
+    for i in range(31):
+        # curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(years=1, days=i)
+        curtime = datetime.datetime.now() + relativedelta(year=2020, month=3, day=1, hour=7, minute=0,
+                                                          second=0) + relativedelta(days=i)
+        # n = 2
+        # for i in range(38):
+        #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(days=i)
+        # n = 3
+        # for i in range(34):
+        #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i) - relativedelta(years=1)
+        # n = 4
+        # for i in range(34):
+        #     curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0,days=i)
         next_day = curtime + relativedelta(days=1)
-        print(str(curtime))
         while curtime.day != next_day.day:
+            print(curtime)
             year = curtime.year
             month = curtime.month
             day = curtime.day
@@ -181,7 +203,7 @@ def addTodayDataRN():
     data_df = pd.DataFrame(data=data,
                            columns=['scenicId', 'camId', 'nums', 'year', 'month', 'day', 'hour', 'minute', 'sec',
                                     'createAt'])
-    data_df.to_csv(file_path + 'recordNumsData' + str(n) + '.csv', encoding='utf-8')
+    data_df.to_csv(file_path + 'recordNumsData.csv', encoding='utf-8')
 
 
 def addTodayDataRW():
@@ -221,7 +243,7 @@ def get_level(x):
 
 
 def compareTodayDataRW():
-    tab_df = pd.read_csv(file_path + 'tab1.csv', header=None, encoding='utf-8')
+    tab_df = pd.read_csv(file_path + 'tab1.csv', header=None, delimiter=',', encoding='utf-8')
     tab_df.columns = ['scenicId', 'nums', 'createAt', 'warning1Nums', 'warning2Nums', 'warning3Nums']
     tab_df['camId'] = 0
     tab_df['type'] = 1
@@ -233,8 +255,8 @@ def compareTodayDataRW():
     res_df = tab_df[tab_df['level'] > 0].reset_index()
     res_df['exceedNums'] = res_df.apply(lambda x: x['warning' + str(x['level']) + 'Nums'], axis=1)
     res_df = res_df.drop(['index', 'nums', 'warning1Nums', 'warning2Nums', 'warning3Nums'], axis=1)
-    res_df.to_csv(file_path + 'rw.csv', encoding='utf-8')
+    res_df.to_csv(file_path + 'recordWarnData.csv', encoding='utf-8', index=None)
 
 
 if __name__ == '__main__':
-    getLakeNumbers()
+    compareTodayDataRW()

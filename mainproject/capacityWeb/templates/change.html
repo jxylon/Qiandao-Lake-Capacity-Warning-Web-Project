@@ -1,0 +1,103 @@
+{% load static %}
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>千岛湖承载量管理系统登录</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!--[if IE]>
+		<script src="http://libs.baidu.com/html5shiv/3.7/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div class="jq22-container" style="padding-top:100px">
+    <div class="login-wrap">
+        <div class="login-html">
+            <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
+                                                                                     class="tab">修改密码</label>
+            <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab"></label>
+            <div class="login-form">
+                <div class="group">
+                    <label for="pass" class="label">新密码</label>
+                    <input id="password_new" type="password" class="input" data-type="password">
+                </div>
+                <div class="group">
+                    <label for="pass" class="label">验证码</label>
+                    <input id="captcha" type="text" class="input" placeholder="请你注意区分大小写">
+                </div>
+                <div class="group">
+                    <div class="input-group">
+                        <input id="phone" type="text" class="form-control" placeholder="请输入你的手机号码">
+                        <span class="input-group-btn">
+                        <button id="sendCaptcha" class="btn btn-default" type="button">发送验证码!</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="group">
+                    <input id="btn" type="submit" class="button" value="确认修改">
+                </div>
+                <div class="hr"></div>
+                <div class="foot-lnk">
+                    <a href="{% url 'login' %}">立刻登录?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        $('#sendCaptcha').click(function () {
+            let phone = $('#phone').val();
+            if (phone == '') {
+                confirm("请输入手机号")
+            }else if (!(/^1[3456789]\d{9}$/.test(phone)))
+            {
+                alert("手机号码有误，请重填");
+            }
+            else {
+                $.get('/sendCaptcha/', {'phone': phone}, function (arg) {
+                    var msg = JSON.parse(arg)['msg'];
+                    confirm(msg);
+                })
+            }
+        });
+        $('#btn').click(function () {
+            let phone = $('#phone').val();
+            let captcha = $('#captcha').val();
+            let password_new = $('#password_new').val();
+
+            if (password_new == '' || phone == '' || captcha == '') {
+                confirm("请你输入完整的信息")
+            }else if (!(/^1[3456789]\d{9}$/.test(phone)))
+            {
+                alert("手机号码有误，请重填");
+            }
+            else {
+                $.get('/doChange/', {
+                    'phone': phone,
+                    'captcha': captcha,
+                    'password_new': password_new
+                }, function (msg) {
+                    canChange = msg['canChange'];
+                    if (canChange == 0) {
+                        confirm('修改失败：验证码错误！')
+                    }else if (canChange == 2){
+                        alert('用户不存在！');
+                    }
+                    else {
+                        confirm('修改成功！');
+                    }
+                })
+            }
+
+        })
+    })
+</script>

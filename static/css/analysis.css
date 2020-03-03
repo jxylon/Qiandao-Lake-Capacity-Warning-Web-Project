@@ -1,0 +1,62 @@
+html, body {
+    background-image: none;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: gray;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.sceic-overview {
+    width: 100%;
+    height: 650px;
+}
+
+.img-overview {
+    text-align: center;
+}
+
+.line1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5bc0de;
+}
+
+.line2 {
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.table-overview {
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.table-overview th {
+    border: 2px solid white;
+    height: 50px;
+    width: 200px;
+    text-align: center;
+}
+
+#line1 {
+    color: white;
+    background-color: #5bc0de;
+}
+
+.table-overview tr:nth-child(odd) {
+    background: #c8e3eb;
+}
+
+.table-overview tr:nth-child(even) {
+    background: #E9F0F5;
+}
+
+.dash {
+    border: 1px dashed gray;
+    margin: 10px 0;
+    width: 100%;
+}
