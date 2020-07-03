@@ -66,7 +66,7 @@ DATABASES = {
         'NAME': 'capacity',
         'USER': 'root',
         'PASSWORD': 'qq2009',
-        'HOST': '121.41.74.33',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

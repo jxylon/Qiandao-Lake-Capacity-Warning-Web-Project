@@ -19,6 +19,7 @@ from django.shortcuts import render, redirect
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera, Camerainfo, Wifiinfo, WifiNumsMonth, WifiNumsDay, \
     Adminer, User, Deviceinfo
+
 # from static.darkflow_video.run_detect import run
 # from static.darknet.run_detect import run_person
 # from static.darknet2.run_detect import run_fight
@@ -338,6 +339,7 @@ def getTouristNums():
         # 本周
         # 查询本周游客人数
         query = "select SUM(todayTotal) as rn_sum_week FROM mobile WHERE ticketDate >= %s AND ticketDate <= %s"
+        print(query_time_monday, query_time)
         cursor.execute(query, [query_time_monday, query_time])
         rn_sum_week = int(dictfetchall(cursor)[0]['rn_sum_week'])
         # 查询上一周游客人数
@@ -370,10 +372,10 @@ def getTouristNums():
         context['rn_sum_day'] = rn_sum_day_new
         context['rn_sum_day_dod'] = (rn_sum_day - rn_sum_day_yesterday) / (rn_sum_day_yesterday + 1) * 100
         context['rn_sum_day_yoy'] = (rn_sum_day - rn_sum_day_lastyear) / (rn_sum_day_lastyear + 1) * 100
-        context['rn_sum_week'] = rn_sum_week * 8
+        context['rn_sum_week'] = rn_sum_week
         context['rn_sum_week_wow'] = (rn_sum_week - rn_sum_week_lastweek) / (rn_sum_week_lastweek + 1) * 100
         context['rn_sum_week_yoy'] = (rn_sum_week - rn_sum_week_lastyear) / (rn_sum_week_lastyear + 1) * 100
-        context['rn_sum_month'] = rn_sum_month * 4
+        context['rn_sum_month'] = rn_sum_month
         context['rn_sum_month_mom'] = (rn_sum_month - rn_sum_month_lastmonth) / (rn_sum_month_lastmonth + 1) * 100
         context['rn_sum_month_yoy'] = (rn_sum_month - rn_sum_month_lastyear) / (rn_sum_month_lastyear + 1) * 100
     return context
@@ -1854,7 +1856,7 @@ def signUp(request):
     canSign = 0
     isExist = len(User.objects.filter(phone=phone))
     nameRepeat = len(User.objects.filter(name=name))
-    if nameRepeat != 0 : # 该账号已经注册
+    if nameRepeat != 0:  # 该账号已经注册
         canSign = 3
     elif isExist != 0:  # 该手机号已经注册
         canSign = 2

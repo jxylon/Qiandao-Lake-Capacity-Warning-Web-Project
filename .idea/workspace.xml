@@ -7,19 +7,29 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1YbSLxcVfgXCIZVf6IIXpmNEfyl" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/manage.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../pythonproj" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RunManager">
     <configuration name="manage" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
@@ -55,24 +65,81 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1583209748696</updated>
-      <workItem from="1583209751329" duration="660000" />
+      <workItem from="1583209751329" duration="4234000" />
+      <workItem from="1583217565878" duration="8873000" />
+      <workItem from="1583259203199" duration="35000" />
+      <workItem from="1583332556765" duration="141000" />
+      <workItem from="1583333546257" duration="2000" />
+      <workItem from="1583336446600" duration="1843000" />
+      <workItem from="1583372615476" duration="1006000" />
+      <workItem from="1583465892633" duration="21000" />
+      <workItem from="1591861470694" duration="452000" />
+      <workItem from="1591862146644" duration="2877000" />
+      <workItem from="1591868912494" duration="69000" />
+      <workItem from="1591947445254" duration="221000" />
+      <workItem from="1591947879008" duration="358000" />
+      <workItem from="1592017236329" duration="13000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="96" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1583209824183">
+    <state x="96" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1591868959919">
       <screen x="0" y="0" width="1280" height="770" />
     </state>
-    <state x="96" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.770@0.0.1280.770" timestamp="1583209824183" />
-    <state x="422" y="141" key="FileChooserDialogImpl" timestamp="1583209811669">
+    <state x="96" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.770@0.0.1280.770" timestamp="1591868959919" />
+    <state x="422" y="141" key="FileChooserDialogImpl" timestamp="1592017247107">
       <screen x="0" y="0" width="1280" height="770" />
     </state>
-    <state x="422" y="141" key="FileChooserDialogImpl/0.0.1280.770@0.0.1280.770" timestamp="1583209811669" />
+    <state x="422" y="141" key="FileChooserDialogImpl/0.0.1280.770/-1680.0.1680.1020@0.0.1280.770" timestamp="1592017247107" />
+    <state x="422" y="141" key="FileChooserDialogImpl/0.0.1280.770@0.0.1280.770" timestamp="1591866011571" />
+    <state width="1238" height="151" key="GridCell.Tab.0.bottom" timestamp="1591948238044">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="151" key="GridCell.Tab.0.bottom/0.0.1280.770@0.0.1280.770" timestamp="1591948238044" />
+    <state width="1238" height="151" key="GridCell.Tab.0.center" timestamp="1591948238044">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="151" key="GridCell.Tab.0.center/0.0.1280.770@0.0.1280.770" timestamp="1591948238044" />
+    <state width="1238" height="151" key="GridCell.Tab.0.left" timestamp="1591948238044">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="151" key="GridCell.Tab.0.left/0.0.1280.770@0.0.1280.770" timestamp="1591948238044" />
+    <state width="1238" height="151" key="GridCell.Tab.0.right" timestamp="1591948238044">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="151" key="GridCell.Tab.0.right/0.0.1280.770@0.0.1280.770" timestamp="1591948238044" />
+    <state width="1238" height="240" key="GridCell.Tab.1.bottom" timestamp="1591866012446">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="240" key="GridCell.Tab.1.bottom/0.0.1280.770@0.0.1280.770" timestamp="1591866012446" />
+    <state width="1238" height="240" key="GridCell.Tab.1.center" timestamp="1591866012446">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="240" key="GridCell.Tab.1.center/0.0.1280.770@0.0.1280.770" timestamp="1591866012446" />
+    <state width="1238" height="240" key="GridCell.Tab.1.left" timestamp="1591866012446">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="240" key="GridCell.Tab.1.left/0.0.1280.770@0.0.1280.770" timestamp="1591866012446" />
+    <state width="1238" height="240" key="GridCell.Tab.1.right" timestamp="1591866012446">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state width="1238" height="240" key="GridCell.Tab.1.right/0.0.1280.770@0.0.1280.770" timestamp="1591866012446" />
+    <state x="142" y="30" key="SettingsEditor" timestamp="1591948212179">
+      <screen x="0" y="0" width="1280" height="770" />
+    </state>
+    <state x="142" y="30" key="SettingsEditor/0.0.1280.770@0.0.1280.770" timestamp="1591948212179" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Qiandao_Lake_Capacity_Warning_Web_Project$manage.coverage" NAME="manage Coverage Results" MODIFIED="1583209825759" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Qiandao_Lake_Capacity_Warning_Web_Project$manage.coverage" NAME="manage Coverage Results" MODIFIED="1591948086588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Qiandao_Lake_Capacity_Warning_Web_Project$views.coverage" NAME="views Coverage Results" MODIFIED="1591862490954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capacityWeb" />
+    <SUITE FILE_PATH="coverage/Qiandao_Lake_Capacity_Warning_Web_Project$tests.coverage" NAME="tests Coverage Results" MODIFIED="1583373236180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capacityWeb" />
   </component>
 </project>

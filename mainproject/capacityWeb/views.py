@@ -370,10 +370,10 @@ def getTouristNums():
         context['rn_sum_day'] = rn_sum_day_new
         context['rn_sum_day_dod'] = (rn_sum_day - rn_sum_day_yesterday) / (rn_sum_day_yesterday + 1) * 100
         context['rn_sum_day_yoy'] = (rn_sum_day - rn_sum_day_lastyear) / (rn_sum_day_lastyear + 1) * 100
-        context['rn_sum_week'] = rn_sum_week * 8
+        context['rn_sum_week'] = rn_sum_week
         context['rn_sum_week_wow'] = (rn_sum_week - rn_sum_week_lastweek) / (rn_sum_week_lastweek + 1) * 100
         context['rn_sum_week_yoy'] = (rn_sum_week - rn_sum_week_lastyear) / (rn_sum_week_lastyear + 1) * 100
-        context['rn_sum_month'] = rn_sum_month * 4
+        context['rn_sum_month'] = rn_sum_month
         context['rn_sum_month_mom'] = (rn_sum_month - rn_sum_month_lastmonth) / (rn_sum_month_lastmonth + 1) * 100
         context['rn_sum_month_yoy'] = (rn_sum_month - rn_sum_month_lastyear) / (rn_sum_month_lastyear + 1) * 100
     return context

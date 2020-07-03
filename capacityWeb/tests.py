@@ -11,8 +11,12 @@ file_path = "E:/Document/"
 
 
 def changeTicketDate(x):
-    l = x.split('-')
-    return '2020-' + l[1] + '-' + l[2]
+    l = x['ticketDate'].split('-')
+    # if int(l[1]) < 10:
+    #     l[1] = '0' + l[1]
+    # if int(l[2]) < 10:
+    #     l[2] = '0' + l[2]
+    return str(x['year']) + '-' + l[1] + '-' + l[2]
 
 
 def readLakeNumbers():
@@ -21,8 +25,8 @@ def readLakeNumbers():
                          'eastsouthDividual', 'eastsouthTeam', 'eastSouthIn', 'forestBar', 'lionCity', 'year', 'month',
                          'day', 'ticketDate']
     mobile_df = mobile_df.drop(['id'], axis=1)
-    mobile_df['year'] = 2020
-    mobile_df['ticketDate'] = mobile_df[['ticketDate']].applymap(lambda x: changeTicketDate(x))
+    mobile_df.loc[mobile_df['year'] == 2018, 'year'] = 2020
+    mobile_df['ticketDate'] = mobile_df[['year', 'ticketDate']].apply(lambda x: changeTicketDate(x), axis=1)
     mobile_df.to_csv(file_path + 'mobile1.csv', index=None)
 
 
@@ -41,9 +45,9 @@ def getLakeNumbers():
         date = str(today)[:10]
         result = requests.get(url, 'date=' + date).json()[0]
         today = today + relativedelta(days=1)
-        forestBar = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
-        lionCity = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
         try:
+            forestBar = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
+            lionCity = random.randint(result['result']['centerIn'] // 5, result['result']['centerIn'] // 4)
             data = {
                 'todayDividual': result['todayDividual'],
                 'todayTeam': result['todayTeam'],
@@ -163,9 +167,9 @@ def addTodayDataRN():
     data = []
     warn1nums = [3927, 3200, 7798, 3352, 5340, 5605, 1462, 1310]
     n = 1
-    for i in range(31):
+    for i in range(335):
         # curtime = datetime.datetime.now() + relativedelta(hour=7, minute=0, second=0) - relativedelta(years=1, days=i)
-        curtime = datetime.datetime.now() + relativedelta(year=2020, month=3, day=1, hour=7, minute=0,
+        curtime = datetime.datetime.now() + relativedelta(year=2020, month=2, day=1, hour=7, minute=0,
                                                           second=0) + relativedelta(days=i)
         # n = 2
         # for i in range(38):
@@ -255,8 +259,8 @@ def compareTodayDataRW():
     res_df = tab_df[tab_df['level'] > 0].reset_index()
     res_df['exceedNums'] = res_df.apply(lambda x: x['warning' + str(x['level']) + 'Nums'], axis=1)
     res_df = res_df.drop(['index', 'nums', 'warning1Nums', 'warning2Nums', 'warning3Nums'], axis=1)
-    res_df.to_csv(file_path + 'recordWarnData.csv', encoding='utf-8', index=None)
+    res_df.to_csv(file_path + 'recordWarnData2.csv', encoding='utf-8', index=None)
 
 
 if __name__ == '__main__':
-    addTodayDataRN()
+    compareTodayDataRW()
